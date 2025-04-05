@@ -1,0 +1,96 @@
+.custom-button {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s;
+
+  // Default button
+  &.default {
+    background-color: var(--primary);
+    color: var(--text);
+
+    &:hover {
+      background-color: hsl(
+        var(--primary-h),
+        var(--primary-s),
+        calc(var(--primary-l) - 10%)
+      ); // Adjust lightness using CSS calc()
+    }
+
+    &:disabled {
+      background-color: var(--hover);
+      color: var(--text);
+      cursor: not-allowed;
+    }
+  }
+
+  // Warning button
+  &.warning {
+    background-color: #faad14;
+    color: #fff;
+
+    &:hover {
+      background-color: hsl(
+        var(--warning-h),
+        var(--warning-s),
+        calc(var(--warning-l) - 10%)
+      );
+    }
+
+    &:disabled {
+      background-color: hsl(
+        var(--warning-h),
+        var(--warning-s),
+        calc(var(--warning-l) + 20%)
+      );
+      cursor: not-allowed;
+    }
+  }
+
+  // Success button
+  &.success {
+    background-color: #52c41a;
+    color: #fff;
+
+    &:hover {
+      background-color: hsl(
+        var(--success-h),
+        var(--success-s),
+        calc(var(--success-l) - 10%)
+      );
+    }
+
+    &:disabled {
+      background-color: hsl(
+        var(--success-h),
+        var(--success-s),
+        calc(var(--success-l) + 20%)
+      );
+      cursor: not-allowed;
+    }
+  }
+
+  // Error button
+  &.error {
+    background-color: #ff4d4f;
+    color: #fff;
+
+    &:hover {
+      background-color: hsl(
+        var(--error-h),
+        var(--error-s),
+        calc(var(--error-l) - 10%)
+      );
+    }
+
+    &:disabled {
+      background-color: hsl(
+        var(--error-h),
+        var(--error-s),
+        calc(var(--error-l) + 20%)
+      );
+      cursor: not-allowed;
+    }
+  }
+}

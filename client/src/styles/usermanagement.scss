@@ -1,0 +1,38 @@
+.user-management {
+  padding: 24px;
+  background-color: var(--background);
+  color: var(--text);
+  border-radius: 4px;
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      margin-bottom: 12px;
+
+      @media (min-width: 768px) {
+        margin-bottom: 0;
+      }
+    }
+    button {
+      background-color: var(--primary);
+      color: var(--text);
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+  }
+}

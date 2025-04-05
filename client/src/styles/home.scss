@@ -1,0 +1,245 @@
+/* HomePage.scss */
+
+/* Global styles referencing theme variables (defined in theme.scss) */
+.home-page {
+  background-color: var(--background);
+  color: var(--text);
+  padding: 0 20px;
+
+  /* -------------------------------------------
+   Animation Keyframes
+-------------------------------------------- */
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* A reusable animation class */
+  .animated-section {
+    animation: fadeInUp 1s ease-out both;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    position: relative;
+
+    .ant-carousel .slick-slide img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 20%;
+      left: 10%;
+      max-width: 500px;
+      color: var(--text);
+      animation: fadeInUp 1s ease-out;
+
+      h1,
+      .ant-typography {
+        color: var(--text);
+        text-transform: uppercase;
+      }
+
+      p {
+        color: var(--text);
+        text-transform: lowercase;
+      }
+
+      button {
+        background-color: var(--primary);
+        border: none;
+        transition: background-color var(--transition-fast), transform 0.3s ease;
+        &:hover {
+          background-color: var(--primary-dark);
+          transform: translateY(-3px);
+        }
+      }
+    }
+  }
+
+  /* Services Section */
+  .services-section {
+    padding: 50px 0;
+    background-color: var(--surface);
+
+    h2 {
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 40px;
+    }
+
+    .ant-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition-smooth), transform 0.3s ease;
+      height: 550px;
+
+      &:hover {
+        box-shadow: var(--neon-glow);
+        transform: translateY(-5px);
+      }
+
+      .ant-card-meta-title {
+        color: var(--text);
+      }
+
+      .ant-card-meta-description {
+        color: var(--text-soft);
+      }
+    }
+
+    .service-info {
+      margin-top: 10px;
+      p {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  /* About Section */
+  .about-section {
+    padding: 50px 0;
+    background-color: var(--background);
+    animation: fadeInUp 1s ease-out;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-md);
+    }
+
+    h2 {
+      color: var(--text);
+    }
+
+    p {
+      color: var(--text-soft);
+    }
+  }
+
+  /* Video Section */
+  .video-section {
+    padding: 50px 0;
+    animation: fadeInUp 1s ease-out;
+
+    h2 {
+      color: var(--text);
+    }
+
+    div {
+      color: var(--text);
+    }
+
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      height: 0;
+
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    }
+  }
+
+  /* Testimonials Section */
+  .testimonials-section {
+    padding: 50px 0;
+    background-color: var(--surface);
+    animation: fadeInUp 1s ease-out;
+
+    h2 {
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 40px;
+    }
+
+    .testimonial-slide {
+      padding: 0 50px;
+      text-align: center;
+
+      .ant-card {
+        max-width: 600px;
+        margin: 0 auto;
+        border: none;
+        box-shadow: var(--shadow-sm);
+        transition: transform 0.3s ease;
+
+        &:hover {
+          transform: translateY(-3px);
+        }
+
+        p {
+          color: var(--text);
+        }
+      }
+    }
+  }
+}
+/* -------------------------------------------
+   Responsive Styles
+-------------------------------------------- */
+
+/* For tablets and mobile devices */
+@media only screen and (max-width: 768px) {
+  .hero-section {
+    .ant-carousel .slick-slide img {
+      height: 300px;
+    }
+
+    .hero-overlay {
+      top: 10%;
+      left: 5%;
+      max-width: 90%;
+      text-align: center;
+    }
+  }
+
+  .services-section {
+    padding: 30px 0;
+    h2 {
+      margin-bottom: 20px;
+    }
+  }
+
+  .about-section {
+    padding: 30px 0;
+    .ant-row {
+      flex-direction: column;
+    }
+  }
+
+  .video-section {
+    padding: 30px 0;
+  }
+
+  .testimonials-section {
+    padding: 30px 0;
+    .testimonial-slide {
+      padding: 0 20px;
+    }
+  }
+}
+
+/* For very small devices */
+@media only screen and (max-width: 480px) {
+  .hero-section {
+    .ant-carousel .slick-slide img {
+      height: 250px;
+    }
+  }
+}

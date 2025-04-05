@@ -1,0 +1,83 @@
+/* signin.scss */
+
+.login-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  padding: 20px;
+  background: var(--background);
+
+  .login-card {
+    background-color: var(--surface);
+    padding: 40px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 400px;
+    animation: fadeIn 0.5s var(--transition-smooth);
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+    label {
+      color: var(--text);
+    }
+    .signin-button {
+      width: 100%;
+      height: 40px;
+      border: none;
+      background: var(--gradient-primary);
+      color: var(--text);
+      transition: all var(--transition-fast);
+
+      &:hover {
+        filter: brightness(1.05);
+      }
+    }
+
+    .google-signup-button {
+      width: 100%;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .signup-link {
+      margin-top: 16px;
+      text-align: center;
+      span {
+        color: var(--text);
+      }
+      a {
+        color: var(--secondary);
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-page-container {
+    .login-card {
+      padding: 20px;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+.floating-menu {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .floating-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px);
+
+    &.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .floating-button {
+      margin-bottom: 10px;
+      width: 45px;
+      height: 45px;
+      border: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      transition: filter 0.3s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+
+      &.scroll-top {
+        background: #1890ff; // blue
+        color: #fff;
+      }
+      &.toggle-theme {
+        background: #52c41a; // green
+        color: #fff;
+      }
+      &.home {
+        background: #fa8c16; // orange
+        color: #fff;
+      }
+      &.whatsapp {
+        background: #25d366; // WhatsApp green
+        color: #fff;
+      }
+    }
+  }
+
+  .floating-main-button {
+    background: var(--primary, #722ed1);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+    &:hover {
+      background: var(--primary-hover, #9254de);
+    }
+  }
+}

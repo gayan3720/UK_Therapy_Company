@@ -1,0 +1,74 @@
+.sidebar {
+  margin-top: 80px;
+  background-color: var(--primary); // Use CSS variable
+  width: 240px; // Full width on desktop
+  transition: background-color 0.3s, color 0.3s, width 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; // Keeps footer at the bottom
+
+  .sidebar-content {
+    flex: 1; // Takes all available space above footer
+
+    .ant-menu {
+      background-color: var(--primary);
+      border-right: none;
+
+      .ant-menu-item {
+        color: var(--text);
+        padding: 40px 24px;
+        transition: color 0.3s, background-color 0.3s, transform 0.3s;
+        border-left: 3px solid transparent; // Accent border for active state
+
+        &:hover {
+          color: var(--background);
+          background-color: var(--hover);
+        }
+      }
+
+      .ant-menu-item-selected {
+        background-color: #1abc9c; /* Vibrant teal for selected background */
+        color: #ffffff; /* White text for contrast */
+        border-left: 3px solid #e67e22; /* Vibrant orange border */
+        transition: background-color 0.3s, color 0.3s, border-left 0.3s,
+          transform 0.3s;
+        animation: menuItemSelected 0.3s ease-in-out;
+      }
+    }
+  }
+
+  .sidebar-footer {
+    width: 100%;
+    text-align: center;
+    padding: 16px 0;
+
+    .collapse-button {
+      color: var(--text);
+      font-size: 20px;
+      width: 100%;
+      transition: color 0.3s;
+
+      &:hover {
+        color: var(--hover);
+      }
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 80px; // Collapsed width for tablets
+  }
+}
+
+@keyframes menuItemSelected {
+  0% {
+    transform: scale(0.95);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

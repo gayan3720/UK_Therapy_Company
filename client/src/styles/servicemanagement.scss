@@ -1,0 +1,60 @@
+.service-management {
+  padding: 24px;
+  background-color: var(--background);
+  color: var(--text);
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    button {
+      background-color: var(--primary);
+      color: var(--text);
+    }
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: center;
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 24px;
+
+      @media (min-width: 768px) {
+        margin: 0;
+      }
+    }
+  }
+
+  .ant-card {
+    border-radius: 4px;
+    overflow: hidden;
+    transition: transform 0.3s;
+    height: 400px;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .ant-card-meta-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .ant-card-meta-description {
+      p {
+        margin: 4px 0;
+      }
+    }
+  }
+
+  .card-details {
+    margin-top: 8px;
+    p {
+      margin: 0 0 4px 0;
+      font-size: 14px;
+    }
+  }
+}

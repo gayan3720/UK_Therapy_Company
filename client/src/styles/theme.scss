@@ -1,0 +1,88 @@
+:root {
+    // Light theme - Neon Glow
+    --primary: #00FFCC; // Vibrant neon teal
+    --primary-h: 165;
+    --primary-s: 100%;
+    --primary-l: 50%;
+  
+    --primary-r: 0;
+    --primary-g: 255;
+    --primary-b: 204;
+  
+    --primary-dark: #00D4AA;
+    --secondary: #FF6B6B; // Soft neon coral
+    --tertiary: #FFD93D; // Sunny yellow
+    --background: #FDFFFC; // Crisp white
+    --surface: #FFFFFF; // Pure white
+    --text: #2D3047; // Deep navy
+    --text-soft: #5A5D72;
+    --hover: rgba(0, 255, 204, 0.1); // Subtle teal overlay
+  
+    // Accent colors
+    --warning: #FF9F1C; // Neon amber
+    --success: #2ECC71; // Electric green
+    --error: #FF3864; // Neon pink-red
+  
+    // Gradients
+    --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+    --gradient-secondary: linear-gradient(45deg, var(--secondary) 0%, var(--error) 100%);
+  
+    // Utility colors
+    --overlay: rgba(255, 255, 255, 0.9);
+    --border: rgba(45, 48, 71, 0.12);
+}
+
+[data-theme="dark"] {
+  // Dark theme - Cyber Noir
+  --primary: #1A1F36; // Deep navy
+  --primary-h: 225;
+  --primary-s: 35%;
+  --primary-l: 16%;
+
+  --primary-r: 26;
+  --primary-g: 31;
+  --primary-b: 54;
+
+  --primary-dark: #0F121F;
+  --secondary: #7B61FF; // Neon purple
+  --tertiary: #00F2FE; // Electric cyan
+  --background: #0A0A0A; // Near-black
+  --surface: #121212; // Dark gray
+  --text: #F0F0F0; // Off-white
+  --text-soft: #A0A0A0;
+  --hover: rgba(123, 97, 255, 0.12);
+
+  // Dark theme accents
+  --warning: #FFB347; // Neon amber
+  --success: #00FF99; // Brighter green
+  --error: #FF4D6D; // Bright red
+
+  // Gradients
+  --gradient-primary: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+}
+
+// Enhanced effects
+:root {
+   // Transitions
+   --transition-fast: 0.15s ease-out;
+   --transition-smooth: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+   
+   // Shadows
+   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+   --neon-glow: 0 0 12px rgba(0, 255, 204, 0.3);
+ 
+   // Border radius
+   --radius-sm: 4px;
+   --radius-md: 8px;
+   --radius-lg: 16px;
+}
+
+[data-theme="dark"] {
+  // Dark theme effects
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.8);
+  --neon-glow: 0 0 25px rgba(123, 97, 255, 0.5);
+}

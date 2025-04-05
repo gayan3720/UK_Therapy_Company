@@ -1,0 +1,36 @@
+@use "./theme.scss" as theme;
+@use "./footer.scss" as footer;
+@use "./sidebar.scss" as sidebar;
+@use "./navbar.scss" as navbar;
+@use "./customform.scss" as customform;
+@use "./mainlayout.scss" as mainlayout;
+@use "./custombutton.scss" as custombutton;
+@use "./datafetchingloader.scss" as datafetchingloader;
+@use "./pageloadingloader.scss" as pageloadingloader;
+@use "./home.scss" as home;
+@use "./signin.scss" as signin;
+@use "./signup.scss" as signup;
+@use "./floatingbutton.scss" as floatingbutton;
+@use "./aboutus.scss" as aboutus;
+@use "./services.scss" as services;
+@use "./contact.scss" as contact;
+@use "./booking.scss" as booking;
+@use "./admindashboard.scss" as admindashboard;
+@use "./tables.scss" as tables;
+@use "./usermanagement.scss" as usermanagement;
+@use "./servicemanagement.scss" as servicemanagement;
+@use "./appointmentmanagement.scss" as appointmentmanagement;
+@use "./timeslotmanagement.scss" as timeslotmanagement;
+@use "./reports.scss" as reports;
+@use "./settings.scss" as settings;
+@use "sass:map"; // Import the Sass map module
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: var(--background); // Use CSS variable
+  color: var(--text); // Use CSS variable
+  transition: background-color 0.3s, color 0.3s; // Smooth transition for theme change
+}
