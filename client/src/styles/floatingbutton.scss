@@ -65,3 +65,80 @@
     }
   }
 }
+
+// Add to floating-buttons .floating-button
+.chat {
+  background: #0084ff; // Messenger blue
+  color: #fff;
+}
+
+// Chat styles
+.chat-interface {
+  height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+
+  .owner-chat-layout {
+    display: flex;
+    height: 100%;
+
+    .chat-list {
+      width: 250px;
+      border-right: 1px solid #f0f0f0;
+      overflow-y: auto;
+
+      .ant-list-item {
+        cursor: pointer;
+        padding: 12px;
+        &:hover {
+          background: #fafafa;
+        }
+      }
+
+      .chat-info {
+        margin-left: 12px;
+        h4 {
+          margin: 0;
+        }
+        p {
+          margin: 0;
+          color: #666;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .messages-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+
+    .message {
+      max-width: 70%;
+      margin: 8px 0;
+      padding: 8px 12px;
+      border-radius: 15px;
+
+      &.owner {
+        background: #1890ff;
+        color: white;
+        margin-left: auto;
+      }
+
+      &.user {
+        background: #f0f0f0;
+        margin-right: auto;
+      }
+    }
+  }
+}

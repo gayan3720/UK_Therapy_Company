@@ -80,24 +80,24 @@ const ServicesSection = () => {
       title: "Therapy Session 1",
       image: service1,
       description: "Relaxing therapy session tailored for you.",
-      price: "$100",
-      duration: "60 mins",
+      price: "100",
+      duration: "60",
     },
     {
       id: 2,
       title: "Therapy Session 2",
       image: service2,
       description: "Revitalizing session to rejuvenate your senses.",
-      price: "$120",
-      duration: "75 mins",
+      price: "120",
+      duration: "75",
     },
     {
       id: 3,
       title: "Therapy Session 3",
       image: service1,
       description: "Rejuvenating therapy for complete relaxation.",
-      price: "$150",
-      duration: "90 mins",
+      price: "150",
+      duration: "90",
     },
   ];
 
@@ -121,8 +121,8 @@ const ServicesSection = () => {
                 description={service.description}
               />
               <div className="service-info">
-                <Paragraph strong>Price: {service.price}</Paragraph>
-                <Paragraph>Duration: {service.duration}</Paragraph>
+                <Paragraph strong>Price: {service.price} $</Paragraph>
+                <Paragraph>Duration: {service.duration} MIN</Paragraph>
               </div>
             </Card>
           </Col>
