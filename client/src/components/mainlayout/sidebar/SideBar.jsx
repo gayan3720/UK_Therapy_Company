@@ -1,31 +1,42 @@
-import React, { useState } from "react";
-import { Layout, Menu, Button } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Drawer, Menu, Button } from "antd";
 import {
   HomeOutlined,
   UserOutlined,
   AppstoreOutlined,
   BookOutlined,
   SettingOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
   BarChartOutlined,
   ClockCircleOutlined,
+  MenuOutlined, // The hamburger icon for opening the menu
 } from "@ant-design/icons";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const { Sider } = Layout;
+const SideMenu = () => {
+  const [visible, setVisible] = useState(false); // Drawer visibility state
+  const [collapsed, setCollapsed] = useState(true); // Menu collapsed state
+  const location = useLocation(); // To get the current active route
+  const menuButtonRef = useRef(null); // Reference for the menu button
 
-const SideBar = ({ isTablet }) => {
-  const [collapsed, setCollapsed] = useState(isTablet); // Collapsed by default on tablets
-  const location = useLocation();
+  // Toggle the drawer
+  const showDrawer = () => setVisible(true);
+  const closeDrawer = () => setVisible(false);
 
-  // Toggle sidebar collapse
-  const toggleCollapse = () => {
-    setCollapsed(!collapsed);
-  };
+  // Close the drawer when clicking outside of it
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuButtonRef.current && !menuButtonRef.current.contains(e.target)) {
+        setVisible(false); // Close drawer when clicking outside
+        setCollapsed(true); // Reset the menu button state
+      }
+    };
 
-  // Update keys to exactly match the route paths
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Menu Items for navigation
   const menuItems = [
     {
       key: "/admin",
@@ -67,39 +78,43 @@ const SideBar = ({ isTablet }) => {
   ];
 
   return (
-    <Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={toggleCollapse}
-      className="sidebar"
-      trigger={null} // Hide default collapse button
-    >
-      <div className="sidebar-content">
+    <>
+      {/* Navbar */}
+      <div className="navbar">
+        {/* Open Menu Button */}
+        <motion.button
+          className="open-menu-btn"
+          onClick={showDrawer}
+          ref={menuButtonRef}
+          whileHover={{ scale: 1.1 }}
+          animate={{ rotate: collapsed ? 0 : 180 }}
+          transition={{ duration: 0.3 }}
+        >
+          <MenuOutlined />
+        </motion.button>
+      </div>
+
+      {/* Drawer Component (Slide-out Menu) */}
+      <Drawer
+        title="ADMIN MENU"
+        placement="left"
+        closable={false}
+        onClose={closeDrawer}
+        visible={visible}
+        width={240} // Drawer width
+        bodyStyle={{ padding: 0 }}
+        className="animated-drawer"
+      >
         <Menu
           theme="dark"
           mode="inline"
           selectedKeys={[location.pathname]}
           items={menuItems}
+          onClick={closeDrawer} // Close drawer on item click
         />
-      </div>
-      <div className="sidebar-footer">
-        <Button
-          type="text"
-          onClick={toggleCollapse}
-          className="collapse-button"
-          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            animate={{ rotate: collapsed ? 0 : 180 }}
-            transition={{ duration: 0.3 }}
-          >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          </motion.div>
-        </Button>
-      </div>
-    </Sider>
+      </Drawer>
+    </>
   );
 };
 
-export default SideBar;
+export default SideMenu;

@@ -1,0 +1,35 @@
+1. Add Data Labels to Tables :
+
+          {
+            title: 'Name',
+            dataIndex: 'name',
+            render: (text, record) => (
+              <td data-label="Name">{text}</td>
+            )
+          }
+
+
+2. Apply Page Transitions :
+
+
+          <Routes>
+            <Route path="/" element={
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                <Home />
+              </motion.div>
+            }/>
+          </Routes>
+
+
+3. Add Skeleton Loaders to data-heavy components :
+
+            {isLoading ? (
+              <div className="skeleton-loader" style={{ height: '100px' }} />
+            ) : (
+              <ActualContent />
+            )}

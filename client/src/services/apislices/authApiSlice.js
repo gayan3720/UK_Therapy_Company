@@ -14,7 +14,7 @@ export const authApiSlice = createApi({
     }
     return headers;
   },
-  tagTypes: ["User", "Users"],
+  tagTypes: ["User", "Users", "UserLocations"],
 
   endpoints: (builder) => ({
     registerUser: builder.mutation({
@@ -26,6 +26,7 @@ export const authApiSlice = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: "User", id },
         { type: "Users" },
+        "UserLocations",
       ],
     }),
 
@@ -46,6 +47,7 @@ export const authApiSlice = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: "User", id },
         { type: "Users" },
+        "UserLocations",
       ],
     }),
 
@@ -57,17 +59,28 @@ export const authApiSlice = createApi({
       invalidatesTags: (result, error, { id }) => [
         { type: "User", id },
         { type: "Users" },
+        "UserLocations",
       ],
     }),
+
     // GET endpoint to fetch a user by ID
     getUserById: builder.query({
       query: (id) => ({ url: `/users/${id}`, method: "GET" }),
       providesTags: (result, error, id) => [{ type: "User", id }],
     }),
+
     // GET endpoint to fetch all users
     getAllUsers: builder.query({
       query: () => ({ url: "/users", method: "GET" }),
       providesTags: (result, error, id) => [{ type: "Users" }],
+    }),
+
+    getLocationsOfUsersAppointmentCompleted: builder.query({
+      query: () => ({
+        url: "/users/getuserlocationsforcompletedappointments",
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "UserLocations" }],
     }),
   }),
 });
@@ -79,4 +92,5 @@ export const {
   useGetAllUsersQuery,
   useLazyGetUserByIdQuery,
   useDeleteUserMutation,
+  useGetLocationsOfUsersAppointmentCompletedQuery,
 } = authApiSlice;

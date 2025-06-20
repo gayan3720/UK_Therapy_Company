@@ -1,5 +1,5 @@
 // HomePage.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Carousel, Card, Row, Col, Typography, Button } from "antd";
 import { motion } from "framer-motion";
 import slide1 from "../../assets/images/slide1.jpg";
@@ -9,8 +9,9 @@ import slide4 from "../../assets/images/slide4.jpg";
 import slide5 from "../../assets/images/slide5.jpg";
 import slide6 from "../../assets/images/slide6.jpg";
 import about1 from "../../assets/images/about1.jpg";
-import service1 from "../../assets/images/service1.jpg";
-import service2 from "../../assets/images/service2.jpg";
+import { useGetAllServicesQuery } from "../../services/apislices/serviceApiSlice";
+import DataFetchingLoader from "../../components/reusablecomponents/loaders/DataFetchingLoader";
+import { shuffleArray } from "../../utils/commonFunctions";
 
 const { Title, Paragraph } = Typography;
 const { Content } = Layout;
@@ -73,34 +74,7 @@ const HeroSection = () => {
 /* -------------------------------------------
    Services Section: Cards displaying therapy sessions.
 -------------------------------------------- */
-const ServicesSection = () => {
-  const services = [
-    {
-      id: 1,
-      title: "Therapy Session 1",
-      image: service1,
-      description: "Relaxing therapy session tailored for you.",
-      price: "100",
-      duration: "60",
-    },
-    {
-      id: 2,
-      title: "Therapy Session 2",
-      image: service2,
-      description: "Revitalizing session to rejuvenate your senses.",
-      price: "120",
-      duration: "75",
-    },
-    {
-      id: 3,
-      title: "Therapy Session 3",
-      image: service1,
-      description: "Rejuvenating therapy for complete relaxation.",
-      price: "150",
-      duration: "90",
-    },
-  ];
-
+const ServicesSection = ({ services }) => {
   return (
     <motion.div
       className="services-section"
@@ -109,15 +83,21 @@ const ServicesSection = () => {
       variants={fadeInUpVariants}
     >
       <Title level={2}>OUR SERVICES</Title>
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} onMouseOver={() => shuffleArray(services)}>
         {services.map((service) => (
           <Col xs={24} sm={12} md={8} key={service.id}>
             <Card
               hoverable
-              cover={<img alt={service.title} src={service.image} />}
+              cover={
+                <img
+                  style={{ height: "350px", objectFit: "cover" }}
+                  alt={service.name}
+                  src={service.imageUrl}
+                />
+              }
             >
               <Card.Meta
-                title={service.title}
+                title={service.name}
                 description={service.description}
               />
               <div className="service-info">
@@ -145,33 +125,39 @@ const AboutSection = () => {
     >
       <Row align="middle" gutter={[32, 32]}>
         <Col xs={24} md={12}>
-          <img src={about1} alt="Our Facility" />
+          <img
+            className="about-image"
+            src={about1}
+            alt="Our Facility"
+            style={{ borderRadius: "var(--radius-lg)" }}
+          />
         </Col>
         <Col xs={24} md={12}>
-          <Title level={2}>ABOUT US</Title>
-          <Paragraph>
-            At Master Sports Therapy, we believe in a holistic approach to
-            physical and mental well-being. Our dedicated team of experts is
-            committed to empowering individuals to achieve optimal health
-            through personalized therapy sessions. With years of experience in
-            sports therapy, rehabilitation, and wellness, our mission is to
-            provide innovative, evidence-based techniques that enhance recovery
-            and performance.
-          </Paragraph>
-          <Paragraph>
-            We value compassion, innovation, and integrity, ensuring that each
-            client receives tailored care to unlock their full potential. Our
-            state-of-the-art facility is designed to create a nurturing and
-            supportive environment where cutting-edge technology meets expert
-            care. We are proud to be a part of our clients' journeys toward
-            better health, fitness, and overall quality of life.
-          </Paragraph>
+          <div className="about-content">
+            <Title level={2}>ABOUT US</Title>
+            <Paragraph className="paragraph">
+              At Master Sports Therapy, we believe in a holistic approach to
+              physical and mental well-being. Our dedicated team of experts is
+              committed to empowering individuals to achieve optimal health
+              through personalized therapy sessions. With years of experience in
+              sports therapy, rehabilitation, and wellness, our mission is to
+              provide innovative, evidence-based techniques that enhance
+              recovery and performance.
+            </Paragraph>
+            <Paragraph className="paragraph">
+              We value compassion, innovation, and integrity, ensuring that each
+              client receives tailored care to unlock their full potential. Our
+              state-of-the-art facility is designed to create a nurturing and
+              supportive environment where cutting-edge technology meets expert
+              care. We are proud to be a part of our clients' journeys toward
+              better health, fitness, and overall quality of life.
+            </Paragraph>
+          </div>
         </Col>
       </Row>
     </motion.div>
   );
 };
-
 /* -------------------------------------------
    Video Section: Embedded video with our story description.
 -------------------------------------------- */
@@ -184,7 +170,7 @@ const VideoSection = () => {
       variants={fadeInUpVariants}
     >
       <Row gutter={[32, 32]} align="middle">
-        <Col xs={24} md={12}>
+        <Col xs={24} md={12} className="story">
           <Title level={2}>OUR STORY</Title>
           <Paragraph>
             Master Sports Therapy was born out of a passion for transforming
@@ -269,11 +255,30 @@ const TestimonialsSection = () => {
    HomePage Component: Assembling all sections.
 -------------------------------------------- */
 const Home = () => {
+  const { data, isLoading, error } = useGetAllServicesQuery();
+  const [services, setServices] = useState([]);
+  console.log(data);
+
+  useEffect(() => {
+    if (data && data.data) {
+      const list = data.data?.map((i) => {
+        return i;
+      });
+      console.log(list, "list");
+
+      setServices(list);
+    } else {
+      setServices([]);
+    }
+  }, [data]);
+
+  if (isLoading) return <DataFetchingLoader />;
+
   return (
     <Layout className="home-page">
       <Content>
         <HeroSection />
-        <ServicesSection />
+        <ServicesSection services={services} />
         <AboutSection />
         <VideoSection />
         <TestimonialsSection />

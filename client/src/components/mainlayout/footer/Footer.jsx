@@ -1,117 +1,96 @@
-import React, { useEffect, useRef } from "react";
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import ThreeDModel from "../../../assets/models/third_person_animations.glb";
+import React from "react";
+import Lottie from "react-lottie";
+import { Row, Col, Typography } from "antd";
+import { Link } from "react-router-dom";
+import footerAnimation from "../../../assets/animations/footer.json"; // Lottie animation
+
+const { Title, Paragraph } = Typography;
 
 const Footer = () => {
-  const mountRef = useRef(null);
-
-  useEffect(() => {
-    const mountNode = mountRef.current;
-
-    // Scene setup
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 300 / 200, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-
-    // Renderer setup
-    renderer.setSize(300, 200);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    mountNode.appendChild(renderer.domElement);
-
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
-
-    // Variable to store the loaded model
-    let loadedModel = null;
-
-    // Model loader
-    const loader = new GLTFLoader();
-    loader.load(
-      ThreeDModel,
-      (gltf) => {
-        loadedModel = gltf.scene;
-        loadedModel.scale.set(3, 3, 3);
-        loadedModel.position.set(0, -2.5, 0);
-        scene.add(loadedModel);
-      },
-      undefined,
-      (error) => {
-        console.error("Error loading model:", error);
-      }
-    );
-
-    // Camera position
-    camera.position.z = 5;
-
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Animate the model if it has been loaded
-      if (loadedModel) {
-        loadedModel.rotation.y += 0.01; // Adjust rotation speed as needed
-      }
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Cleanup
-    return () => {
-      mountNode.removeChild(renderer.domElement);
-      renderer.dispose();
-    };
-  }, []);
+  const lottieOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: footerAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   return (
     <footer className="footer">
       <div className="footer-content">
-        {/* 3D Model Viewer */}
-        <div className="model-viewer" ref={mountRef}></div>
-
-        {/* Content Sections */}
-        <div className="footer-sections">
-          <div className="footer-section">
-            <h3>About Us</h3>
-            <p>
-              We provide the best therapy services to help you heal and grow.
-            </p>
-          </div>
-          <div className="footer-section">
-            <h3>Quick Links</h3>
+        <Row gutter={[32, 32]}>
+          <Col xs={24} sm={12} md={6}>
+            <Lottie options={lottieOptions} height={200} width={200} />
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Title level={3}>About Us</Title>
+            <Paragraph>
+              Master Sports Therapy offers personalized therapy sessions
+              focusing on sports recovery, performance improvement, and overall
+              well-being.
+            </Paragraph>
+            <Paragraph>
+              <Link to="/about">Learn More</Link>
+            </Paragraph>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Title level={3}>Quick Links</Title>
             <ul>
               <li>
-                <a href="/">Home</a>
+                <Link to="/">Home</Link>
               </li>
               <li>
-                <a href="/about">About Us</a>
+                <Link to="/services">Services</Link>
               </li>
               <li>
-                <a href="/services">Services</a>
+                <Link to="/contact">Contact</Link>
               </li>
               <li>
-                <a href="/contact">Contact</a>
-              </li>
-              <li>
-                <a href="/booking">Book Now</a>
+                <Link to="/booking">Book Now</Link>
               </li>
             </ul>
-          </div>
-          <div className="footer-section">
-            <h3>Contact Us</h3>
-            <p>Email: mastersportstherapy@gmail.com</p>
-            <p>Phone: +44 7479204852</p>
-          </div>
-        </div>
+          </Col>
+          <Col xs={24} sm={12} md={6}>
+            <Title level={3}>Contact Us</Title>
+            <Paragraph>Email: mastersportstherapy@gmail.com</Paragraph>
+            <Paragraph>Phone: +44 7479 204852</Paragraph>
+            <Paragraph>
+              Address: 189 Penarth Road, Cardiff, United Kingdom
+            </Paragraph>
+          </Col>
+        </Row>
       </div>
+
       <div className="footer-bottom">
-        <p>&copy; 2025 Master Sports Therapy. All rights reserved.</p>
-        <p>&copy; Designed by Optimus Innovations (pvt) ltd.</p>
+        <Row justify="center">
+          <Col xs={24} sm={12} md={6}>
+            <Title level={5}>Follow Us</Title>
+            <ul className="social-links">
+              <li>
+                <Link to="#">
+                  <i className="fab fa-facebook"></i>
+                </Link>
+              </li>
+              <li>
+                <Link to="#">
+                  <i className="fab fa-twitter"></i>
+                </Link>
+              </li>
+              <li>
+                <Link to="#">
+                  <i className="fab fa-instagram"></i>
+                </Link>
+              </li>
+              <li>
+                <Link to="#">
+                  <i className="fab fa-linkedin"></i>
+                </Link>
+              </li>
+            </ul>
+          </Col>
+        </Row>
+        <p>&copy; 2025 Master Sports Therapy. All Rights Reserved</p>
       </div>
     </footer>
   );

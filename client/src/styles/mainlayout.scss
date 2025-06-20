@@ -1,27 +1,42 @@
 .main-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 80vh;
+  background-color: var(--gradient-primary); /* Use theme background color */
+  color: var(--text); /* Text color from theme */
+  transition: background-color var(--transition-smooth),
+    color var(--transition-smooth);
 }
 
 .content-layout {
   display: flex;
   flex: 1;
-  min-height: 100vh;
+  min-height: 80vh;
   /* This container will hold the sidebar on the left and content on the right */
+  background-color: var(--gradient-primary); /* Consistent background */
+  color: var(--text); /* Ensure the text color comes from theme */
 }
 
 .main-content,
 .main-content-sign {
   flex: 1;
-  padding: 24px;
-  background-color: var(--background);
+  background-color: var(
+    --gradient-primary
+  ); /* Use surface color for content area */
   color: var(--text);
-  transition: background-color 0.3s, color 0.3s;
-  /* If your navbar is fixed and overlays content, you can adjust margin-top here */
-  margin-top: 80px;
+  transition: background-color var(--transition-smooth),
+    color var(--transition-smooth);
+  margin-top: 80px; /* For content that is not sign-in */
 }
 
 .main-content-sign {
   margin-top: 0;
+}
+
+/* Responsive Layout Adjustments */
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-top: 0;
+  }
 }

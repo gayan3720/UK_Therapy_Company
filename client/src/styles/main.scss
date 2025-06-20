@@ -1,7 +1,6 @@
 @use "./theme.scss" as theme;
 @use "./footer.scss" as footer;
 @use "./sidebar.scss" as sidebar;
-@use "./navbar.scss" as navbar;
 @use "./customform.scss" as customform;
 @use "./mainlayout.scss" as mainlayout;
 @use "./custombutton.scss" as custombutton;
@@ -23,14 +22,65 @@
 @use "./timeslotmanagement.scss" as timeslotmanagement;
 @use "./reports.scss" as reports;
 @use "./settings.scss" as settings;
-@use "sass:map"; // Import the Sass map module
+@use "./messagemodel.scss" as messagemodel;
+@use "./button.scss" as button;
+@use "./table.scss" as table;
+@use "./navbar.scss" as navbar;
+
+body,
+html {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  /* Remove overflow-y: auto from here */
+  height: auto; /* Changed from 100% to auto */
+}
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+  padding: 80px 20px 0 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
-  background-color: var(--background); // Use CSS variable
-  color: var(--text); // Use CSS variable
-  transition: background-color 0.3s, color 0.3s; // Smooth transition for theme change
+  color: var(--text);
+  transition: background-color var(--transition-smooth),
+    color var(--transition-smooth);
+  /* Remove height: fit-content; */
+  overflow-y: auto; /* Keep as auto */
+}
+
+// Apply the theme for both dark and light mode
+[data-theme="dark"] {
+  background-color: var(--background);
+  color: var(--text);
+}
+// Global Resets and Utility Styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Optional: Target dynamically injected runtime class if necessary */
+.css-dev-only-do-not-override-1yacf91 {
+  .ant-menu-horizontal > .ant-menu-item-selected,
+  .ant-menu-horizontal > .ant-menu-submenu-selected,
+  .ant-menu-horizontal > .ant-menu-item-active,
+  .ant-menu-horizontal > .ant-menu-submenu-active,
+  .ant-menu-horizontal > .ant-menu-item:hover,
+  .ant-menu-horizontal > .ant-menu-submenu:hover {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-horizontal > .ant-menu-item-selected::after,
+  .ant-menu-horizontal > .ant-menu-submenu-selected::after,
+  .ant-menu-horizontal > .ant-menu-item-active::after,
+  .ant-menu-horizontal > .ant-menu-submenu-active::after,
+  .ant-menu-horizontal > .ant-menu-item:hover::after,
+  .ant-menu-horizontal > .ant-menu-submenu:hover::after {
+    border-bottom: none !important;
+    content: none !important;
+  }
+}
+.lottie-menu-icon {
+  filter: var(--menu-icon-filter);
+  transition: filter 0.3s ease;
 }

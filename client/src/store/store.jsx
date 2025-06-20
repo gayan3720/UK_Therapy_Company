@@ -8,6 +8,7 @@ import { authApiSlice } from "../services/apislices/authApiSlice";
 import { serviceApiSlice } from "../services/apislices/serviceApiSlice";
 import { appointmentApiSlice } from "../services/apislices/appointmentApiSlice";
 import { timeslotsApiSlice } from "../services/apislices/timeslotsApiSlice";
+import { chatApiSlice } from "../services/apislices/chatApiSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     [serviceApiSlice.reducerPath]: serviceApiSlice.reducer,
     [appointmentApiSlice.reducerPath]: appointmentApiSlice.reducer,
     [timeslotsApiSlice.reducerPath]: timeslotsApiSlice.reducer,
+    [chatApiSlice.reducerPath]: chatApiSlice.reducer,
 
     //slices
     theme: themeSlice,
@@ -29,6 +31,7 @@ export const store = configureStore({
       authApiSlice.middleware,
       serviceApiSlice.middleware,
       appointmentApiSlice.middleware,
-      timeslotsApiSlice.middleware
+      timeslotsApiSlice.middleware,
+      chatApiSlice.middleware
     ),
 });

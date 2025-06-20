@@ -16,15 +16,13 @@ export const login = async (req, res) => {
     //retrieve user bt username
     const [rows] = await pool.query("CALL sp_loginUser(?)", [username]);
     const user = rows[0][0];
-    if (!user) {
-      return res.status(404).json(responseTemp(1, "Invalid username.!", null));
-    }
+    if (!user)
+      return res.status(201).json(responseTemp(1, "Invalid username.!", null));
 
     //compare hashed password
     const match = await bycrypt.compare(password, user.password);
-    if (!match) {
-      return res.status(401).json(responseTemp(1, "Invalid password.!", null));
-    }
+    if (!match)
+      return res.status(201).json(responseTemp(1, "Invalid password.!", null));
 
     //generate jwt token
     const token = jwt.sign(
@@ -42,8 +40,7 @@ export const login = async (req, res) => {
 
     res.status(200).json(responseTemp(1, "Successfully logged in.!", token));
   } catch (err) {
-    console.log(err);
-    res.status(500).json(responseTemp(0, "Internal server error.!"));
+    res.status(500).json(responseTemp(0, "Internal server error.!", null));
   }
 };
 
@@ -91,6 +88,30 @@ export const register = async (req, res) => {
   }
 };
 
+export const getUserLocationsForCompletedAppointments = async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      "CALL sp_getUserLocationsForCompletedAppointments()"
+    );
+
+    const result = rows[0]; // Make sure the result comes from the correct row
+    console.log(rows, "rows");
+
+    if (result.length === 0) {
+      return res
+        .status(404)
+        .json(responseTemp(1, "No completed appointments found.!", null));
+    }
+
+    res
+      .status(200)
+      .json(responseTemp(1, "Successfully fetched user locations.!", result));
+  } catch (error) {
+    console.error("Error fetching user locations:", error);
+    res.status(500).json(responseTemp(0, "Internal server error.!", null));
+  }
+};
+
 export const getUserByID = async (req, res) => {
   const { userID } = req.params;
   try {
@@ -98,7 +119,7 @@ export const getUserByID = async (req, res) => {
     const user = rows[0][0];
 
     if (!user) {
-      return res.status(404).json(responseTemp(1, "User not found.!"));
+      return res.status(404).json(responseTemp(1, "User not found.!", null));
     }
     const baseUrl =
       process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
@@ -124,7 +145,9 @@ export const deleteUser = async (req, res) => {
   }
   try {
     await pool.execute("CALL sp_deleteUser(?)", [numericId]);
-    res.status(200).json(responseTemp(1, "Successfully deleted the user.!"));
+    res
+      .status(200)
+      .json(responseTemp(1, "Successfully deleted the user.!", null));
   } catch (error) {
     console.log(error);
     res.status(500).json(responseTemp(0, "Internal server error.!", null));
@@ -145,7 +168,7 @@ export const changePassword = async (req, res) => {
     if (!isMatched) {
       return res
         .status(400)
-        .json(responseTemp(1, "Old password is incorrect.!"));
+        .json(responseTemp(1, "Old password is incorrect.!", null));
     }
     const hashedNewPassword = await bycrypt.hash(newPassword, saltRounds);
     const [success] = await pool.execute("CALL sp_changePassword(?,?)", [
@@ -233,7 +256,7 @@ export const updateUserRole = async (req, res) => {
       .json(responseTemp(1, "Successfully updated the user.!", null));
   } catch (error) {
     console.log(error);
-    res.status(500).json(responseTemp(0, "Internal server error", null));
+    res.status(500).json(responseTemp(0, "Internal server error.!", null));
   }
 };
 

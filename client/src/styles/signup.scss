@@ -1,12 +1,12 @@
-/* signup.scss */
-
 .login-page-container-signup {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 90vh;
   padding: 20px;
-  background: var(--background);
+  background: var(--gradient-primary);
+  margin: 0 200px 20px 200px;
+  border-radius: 20px;
+  min-height: 80vh;
 
   .login-card-signup {
     background-color: var(--surface);
@@ -17,10 +17,30 @@
     max-width: 600px; // Increased width
     animation: fadeIn 0.5s var(--transition-smooth);
 
+    /* Add logo styles */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px; /* Reduced space between logo and title */
+
+      .login-logo {
+        border-radius: 10px;
+        max-width: 120px; /* Control logo size */
+        height: auto;
+      }
+    }
+
     .login-title {
       text-align: center;
       margin-bottom: 24px;
       color: var(--text);
+      /* Add the new title styles */
+      font-size: 1.5rem; /* Reduced size */
+      text-transform: uppercase; /* Uppercase */
+      font-weight: 700; /* Bold */
+      color: var(--primary); /* Primary color */
+      letter-spacing: 1px; /* Spacing between letters */
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Optional shadow */
     }
 
     label {
@@ -34,6 +54,7 @@
       background: var(--gradient-primary);
       color: var(--text);
       transition: all var(--transition-fast);
+      position: static;
       &:hover {
         filter: brightness(1.05);
       }
@@ -45,6 +66,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: static;
     }
 
     .signup-link {
@@ -54,7 +76,7 @@
         color: var(--text);
       }
       a {
-        color: var(--secondary);
+        color: var(--text);
         &:hover {
           text-decoration: underline;
         }
@@ -99,9 +121,25 @@
 }
 
 /* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-page-container-signup {
+    margin: 0 20px 20px 20px; /* Reduce side margins on mobile */
+
+    .login-card-signup {
+      .login-title {
+        font-size: 1.3rem; /* Slightly smaller on mobile */
+      }
+
+      .logo-container .login-logo {
+        max-width: 100px; /* Slightly smaller logo on mobile */
+      }
+    }
+  }
+}
+
 @media (max-width: 480px) {
-  .login-page-container {
-    .login-card {
+  .login-page-container-signup {
+    .login-card-signup {
       padding: 20px;
     }
   }

@@ -1,161 +1,334 @@
-import React, { useState, useEffect } from "react";
-import { Layout, Menu, Input, Avatar, Dropdown, Switch, Button } from "antd";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Layout, Menu, Input, Avatar, Button, Popconfirm, Tooltip } from "antd";
 import {
-  MoonOutlined,
-  SunOutlined,
   UserOutlined,
-  MenuOutlined,
+  BellOutlined,
+  CalendarOutlined,
+  GlobalOutlined,
+  SearchOutlined,
+  SunOutlined,
+  MoonOutlined,
 } from "@ant-design/icons";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getTheme, toggleTheme } from "../../../services/slices/themeSlice";
-import logo from "../../../assets/images/logo.jpg";
-import Title from "antd/es/typography/Title";
+import { getTheme, setTheme } from "../../../services/slices/themeSlice";
 import { getUser, setUser } from "../../../services/slices/authSlice";
+import logo_light from "../../../assets/images/logo-light.png";
+import logo_dark from "../../../assets/images/logo-dark.png";
 import { userRoles } from "../../../utils/enum";
-import { Popconfirm } from "antd/lib";
+import { useTranslation } from "react-i18next";
+import GBFlag from "../../../assets/images/gb.png"; // Import GB Flag image
+import FRFlag from "../../../assets/images/fr.png"; // Import FR Flag image
+import ESFlag from "../../../assets/images/es.png"; // Import ES Flag image
+import LottieAninationMenu from "../../lottieanimation/LottieAninationMenu";
 
 const { Header } = Layout;
 const { Search } = Input;
 
-const NavBar = ({ isAdminRoute, isMobile }) => {
+const UserProfileMenu = ({ user, handleLogout, token }) => {
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const { t } = useTranslation();
+  const containerRef = useRef(null);
+
+  const toggleDropdown = () => {
+    if (token) {
+      setDropdownVisible((prev) => !prev);
+    }
+  };
+
+  const closeDropdown = () => {
+    setDropdownVisible(false);
+  };
+  return (
+    <div
+      className="user-avatar-container"
+      ref={containerRef}
+      onMouseLeave={closeDropdown}
+    >
+      <Avatar
+        className="user-avatar"
+        src={user?.imageUrl || undefined}
+        icon={!user?.imageUrl && <UserOutlined />}
+        onClick={toggleDropdown}
+      />
+      {token && isDropdownVisible && (
+        <div className="user-dropdown-menu show">
+          <div className="user-header">
+            <Avatar
+              size={64}
+              src={user?.imageUrl || undefined}
+              icon={!user?.imageUrl && <UserOutlined />}
+            />
+            <div className="user-info">
+              <h3>{user?.username || "Guest"}</h3>
+            </div>
+          </div>
+          <Menu theme="light" className="menu-items" mode="vertical">
+            <Menu.Item key="profile" icon={<UserOutlined />}>
+              {t("profile")}
+            </Menu.Item>
+            <Menu.Item key="notifications" icon={<BellOutlined />}>
+              {t("notifications")}
+            </Menu.Item>
+            <Menu.Item key="appointments" icon={<CalendarOutlined />}>
+              {t("appointments")}
+            </Menu.Item>
+            <Menu.Item key="settings" icon={<GlobalOutlined />}>
+              {t("settings")}
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item key="logout" className="logout-item">
+              <Popconfirm
+                title={t("logoutConfirmation")}
+                onConfirm={handleLogout}
+                okText="Yes"
+                cancelText="No"
+                placement="left"
+              >
+                <Button className="logout-button" type="primary" danger block>
+                  {t("logout")}
+                </Button>
+              </Popconfirm>
+            </Menu.Item>
+          </Menu>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const NavBar = ({ isAdminRoute, scrolled, width, hideTop, hideBottom }) => {
+  const popupRef = useRef(null);
+  const buttonRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useSelector(getTheme);
   const user = useSelector(getUser);
-  const [visible, setVisible] = useState(false);
-  const [navbarVisible, setNavbarVisible] = useState(true);
   const location = useLocation();
   const token = localStorage.getItem("token");
+  const { t, i18n } = useTranslation();
 
-  // Toggle theme
-  const handleThemeToggle = (checked) => {
-    dispatch(toggleTheme(checked ? "dark" : "light"));
-    document.documentElement.setAttribute(
-      "data-theme",
-      checked ? "dark" : "light"
-    );
-  };
-
-  const handleLogout = () => {
-    // Remove the token from localStorage
-    localStorage.removeItem("token");
-    // Clear the user state
-    dispatch(setUser({}));
-    navigate("/");
-    window.location.reload();
-  };
-  // User dropdown menu
-  const userMenu1 = (
-    <Menu>
-      <Menu.Item key="username">{user?.username}</Menu.Item>
-      <Menu.Item key="profile">Profile</Menu.Item>
-      <Menu.Item key="logout">
-        <Popconfirm
-          title="Are you sure you want to logout?"
-          onConfirm={() => handleLogout()}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button type="link">Logout</Button>
-        </Popconfirm>
-      </Menu.Item>
-    </Menu>
-  );
-  const userMenu2 = (
-    <Menu>
-      <Menu.Item key="signin">
-        <Link to={"/signin"}>Signin</Link>
-      </Menu.Item>
-      <Menu.Item key="signup">
-        <Link to={"/signup"}>Signup</Link>
-      </Menu.Item>
-    </Menu>
-  );
-
-  // Use exact route paths as keys for consistency
-  const items = [
-    { key: "/", label: <Link to="/">Home</Link> },
-    { key: "/about", label: <Link to="/about">About Us</Link> },
-    { key: "/services", label: <Link to="/services">Services</Link> },
-    { key: "/contact", label: <Link to="/contact">Contact</Link> },
-    { key: "/book", label: <Link to="/book">Book Now</Link> },
-    !isMobile &&
-      (user.roleID === userRoles.admin ||
-        user.roleID === userRoles.subAdmin) && {
-        key: "/admin",
-        label: <Link to="/admin">Admin Panel</Link>,
-      },
-  ].filter(Boolean);
+  const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+  const [popupVisible, setPopupVisible] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const halfPageHeight = window.innerHeight / 2;
-      setNavbarVisible(window.scrollY <= halfPageHeight);
-    };
+  const formattedDate = new Intl.DateTimeFormat("en-GB", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date());
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const formattedTime = new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }).format(new Date());
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    dispatch(setUser({}));
+    navigate("/");
+  };
+
+  const items = [
+    { key: "/", label: <Link to="/">{t("home")}</Link> },
+    { key: "/about", label: <Link to="/about">{t("aboutUs")}</Link> },
+    { key: "/services", label: <Link to="/services">{t("services")}</Link> },
+    { key: "/contact", label: <Link to="/contact">{t("contact")}</Link> },
+    { key: "/book", label: <Link to="/book">{t("bookNow")}</Link> },
+    !(width < 768) &&
+      (user.roleID === userRoles.admin ||
+        user.roleID === userRoles.subAdmin) && {
+        key: "/admin",
+        label: <Link to="/admin">{t("adminPanel")}</Link>,
+      },
+    width < 768 &&
+      !token && {
+        key: "/signin",
+        label: <Link to="/signin ">{t("signIn")}</Link>,
+      },
+    width < 768 &&
+      !token && {
+        key: "/signup",
+        label: <Link to="/signup">{t("signUp")}</Link>,
+      },
+  ].filter(Boolean);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    setPopupVisible(false);
+  };
+
+  // Detect clicks outside the language dropdown to close it
+  const handleClickOutside = (e) => {
+    if (
+      buttonRef.current?.contains(e.target) ||
+      popupRef.current?.contains(e.target)
+    ) {
+      return;
+    }
+    setPopupVisible(false);
+  };
+
+  // (3) attach/detach listener on mount/unmount
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
   }, []);
 
   return (
-    <Header className={`navbar ${navbarVisible ? "visible" : ""}`}>
-      <div className="logo">
-        <img src={logo} alt="MST" style={{ height: "40px", width: "40px" }} />
-        <Title level={3}>Master Sports Therapy</Title>
+    <Header
+      className={`navbar ${theme} ${scrolled ? "scrolled" : ""} ${
+        hideTop ? "hide-top" : ""
+      } ${hideBottom ? "hide-bottom" : ""}`}
+    >
+      {/* Top Row */}
+      {width >= 768 && (
+        <div className={`navbar-top-row ${scrolled ? "scrolled" : ""}`}>
+          <div className="top-left">
+            {formattedDate} | {formattedTime}
+          </div>
+          <div className="top-right">
+            {!token ? (
+              <>
+                <Link to="/signin" className="signin-button">
+                  {t("signIn")}
+                </Link>
+                <Link to="/signup" className="signup-button">
+                  {t("signUp")}
+                </Link>
+              </>
+            ) : null}
+
+            <button
+              className="language-button"
+              onClick={() => setPopupVisible((v) => !v)}
+              ref={buttonRef}
+            >
+              <img
+                src={
+                  i18n.language === "en"
+                    ? GBFlag
+                    : i18n.language === "fr"
+                    ? FRFlag
+                    : ESFlag
+                }
+                alt="language flag"
+                style={{ width: "24px", height: "16px" }}
+              />
+            </button>
+          </div>
+        </div>
+      )}
+      {popupVisible && (
+        <div className="language-popup show" ref={popupRef}>
+          <ul>
+            <li onClick={() => changeLanguage("en")}>
+              <img src={GBFlag} alt="GB Flag" /> English
+            </li>
+            <li onClick={() => changeLanguage("fr")}>
+              <img src={FRFlag} alt="FR Flag" /> Français
+            </li>
+            <li onClick={() => changeLanguage("es")}>
+              <img src={ESFlag} alt="ES Flag" /> Español
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* Bottom Row */}
+      <div className={`navbar-bottom-row ${scrolled ? "scrolled" : ""}`}>
+        {/* Logo */}
+        <div className="logo-container">
+          <Link to="/" className="logo">
+            <img
+              src={theme === "light" ? logo_light : logo_dark}
+              alt="Master Sports Therapy Logo"
+            />
+          </Link>
+        </div>
+
+        {width < 768 || (768 <= width && width < 1024) ? null : (
+          <Menu
+            theme="light"
+            className="desktop-menu"
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={items}
+          />
+        )}
+        {/* Search Bar */}
+
+        <div className="search-wrapper">
+          <Search
+            placeholder={t("searchPlaceholder") || "Search..."}
+            allowClear
+            enterButton={<SearchOutlined />}
+            className="search-bar"
+            onSearch={(val) => console.log("Searching for:", val)}
+          />
+        </div>
+        {width > 768 && (
+          <>
+            {/* Theme Toggle */}
+            <Tooltip
+              title={theme === "light" ? t("switchToDark") : t("switchToLight")}
+            >
+              <Button
+                className="theme-toggle-button"
+                type="text"
+                onClick={() => {
+                  const newTheme = theme === "light" ? "dark" : "light";
+                  dispatch(setTheme(newTheme));
+                }}
+              >
+                {theme === "light" ? <MoonOutlined /> : <SunOutlined />}
+              </Button>
+            </Tooltip>
+
+            {/* User Avatar */}
+            <UserProfileMenu
+              user={user}
+              handleLogout={handleLogout}
+              token={token}
+            />
+          </>
+        )}
+        {/* Mobile Menu */}
+        {mobileMenuVisible && (
+          <div className="mobile-menu">
+            <Menu
+              mode="vertical"
+              selectedKeys={[location.pathname]}
+              items={items}
+            />
+          </div>
+        )}
+        {/* Hamburger Button */}
+        {width < 768 && (
+          <>
+            {/* User Avatar */}
+            <UserProfileMenu
+              user={user}
+              handleLogout={handleLogout}
+              token={token}
+            />
+            <Tooltip title={"Menu"}>
+              <div onClick={() => setMobileMenuVisible((prev) => !prev)}>
+                {" "}
+                <LottieAninationMenu isOpen={mobileMenuVisible} />
+              </div>
+            </Tooltip>
+          </>
+        )}
       </div>
-
-      {/* Desktop Menu */}
-      <Menu
-        theme={theme === "dark" ? "dark" : "light"}
-        mode="horizontal"
-        selectedKeys={[location.pathname]}
-        items={items}
-        className="desktop-menu"
-      />
-
-      {/* Search Bar */}
-      <Search
-        placeholder="Search..."
-        className="search-bar"
-        onSearch={(value) => console.log(value)}
-      />
-
-      {/* Theme Toggle */}
-      <Switch
-        checked={theme === "dark"}
-        onChange={handleThemeToggle}
-        checkedChildren={<MoonOutlined />}
-        unCheckedChildren={<SunOutlined />}
-        className="theme-toggle"
-      />
-
-      {/* User Avatar */}
-      <Dropdown overlay={token ? userMenu1 : userMenu2} trigger={["click"]}>
-        <Avatar
-          src={user?.imageUrl || undefined}
-          icon={!user?.imageUrl ? <UserOutlined /> : null}
-          className="user-avatar"
-        />
-      </Dropdown>
-
-      {/* Mobile Hamburger Menu */}
-      <div className="hamburger-menu" onClick={() => setVisible(!visible)}>
-        <MenuOutlined />
-      </div>
-
-      {/* Mobile Menu */}
-      <Menu
-        theme={theme === "dark" ? "dark" : "light"}
-        mode="vertical"
-        selectedKeys={[location.pathname]}
-        items={items}
-        className={`mobile-menu ${visible ? "visible" : ""}`}
-      />
     </Header>
   );
 };

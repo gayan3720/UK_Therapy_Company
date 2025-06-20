@@ -27,7 +27,9 @@
   /* Services Section */
   .services-section {
     padding: 60px 20px;
-    background: var(--background);
+    background: var(--gradient-primary);
+    margin-top: 20px;
+    border-radius: var(--radius-md);
 
     h2 {
       text-align: center;
@@ -65,7 +67,9 @@
   /* Video Section */
   .video-section {
     padding: 60px 20px;
-    background: var(--surface);
+    background: var(--gradient-primary);
+    margin-top: 20px;
+    border-radius: var(--radius-md);
 
     h2 {
       text-align: center;

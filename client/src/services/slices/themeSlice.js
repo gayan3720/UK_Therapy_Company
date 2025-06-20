@@ -9,14 +9,14 @@ const themeSlice = createSlice({
   name: "theme",
   initialState,
   reducers: {
-    toggleTheme: (state, action) => {
+    setTheme: (state, action) => {
       state.theme = action.payload;
       localStorage.setItem("theme", action.payload); // Save theme to localStorage
     },
   },
 });
 
-export const { toggleTheme } = themeSlice.actions;
+export const { setTheme } = themeSlice.actions;
 
 export const getTheme = (state) => state.theme.theme;
 

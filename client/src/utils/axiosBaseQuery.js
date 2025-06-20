@@ -1,11 +1,24 @@
 import axios from "axios";
 
-//custom axios base query function
 export const axiosBaseQuery =
-  ({ baseUrl } = { baseUrl: "" }) =>
-  async ({ url, method, data, params }) => {
+  ({ baseUrl = "", prepareHeaders } = {}) =>
+  async ({ url, method, data, params }, api) => {
     try {
-      const result = await axios({ url: baseUrl + url, method, data, params });
+      let headers = {};
+
+      if (prepareHeaders) {
+        // Pass headers and api (which contains getState, dispatch, etc.)
+        headers = prepareHeaders(headers, api) || headers;
+      }
+
+      const result = await axios({
+        url: baseUrl + url,
+        method,
+        data,
+        params,
+        headers,
+      });
+
       return { data: result.data };
     } catch (axiosError) {
       let err = axiosError;

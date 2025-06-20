@@ -70,14 +70,14 @@ const ServiceManagement = () => {
     {
       type: "text",
       name: "price",
-      label: "Price",
+      label: "Price ($)",
       placeholder: "Enter price",
       rules: [{ required: true, message: "Please enter price!" }],
     },
     {
       type: "text",
       name: "duration",
-      label: "Duration",
+      label: "Duration (hrs)",
       placeholder: "Enter duration",
       rules: [{ required: true, message: "Please enter duration!" }],
     },
@@ -103,8 +103,8 @@ const ServiceManagement = () => {
       try {
         const formData = new FormData();
         if (values.image) {
-          values.image.file
-            ? formData.append("image", values.image.file.originFileObj)
+          values.image
+            ? formData.append("image", values.image.originFileObj)
             : formData.append("image", values.image);
         }
         formData.append("id", editingService && editingService.id);
@@ -130,7 +130,7 @@ const ServiceManagement = () => {
       try {
         const formData = new FormData();
         if (values.image) {
-          formData.append("image", values.image.file.originFileObj);
+          formData.append("image", values.image.originFileObj);
         }
         formData.append("name", values.name);
         formData.append("description", values.description);
@@ -188,10 +188,10 @@ const ServiceManagement = () => {
                   <div className="card-details">
                     <p>{service.description}</p>
                     <p>
-                      <strong>Price:</strong> {service.price}
+                      <strong>Price:</strong> {service.price} $
                     </p>
                     <p>
-                      <strong>Duration:</strong> {service.duration}
+                      <strong>Duration:</strong> {service.duration} hrs
                     </p>
                   </div>
                 }

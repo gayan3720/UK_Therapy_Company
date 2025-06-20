@@ -15,6 +15,8 @@ import { getUser } from "../../../services/slices/authSlice";
 
 const TimeslotManagement = () => {
   const user = useSelector(getUser);
+  console.log(user, "user");
+
   const [
     createTimeslot,
     {
@@ -73,15 +75,16 @@ const TimeslotManagement = () => {
 
   useEffect(() => {
     if (timeslots && timeslots.data !== null) {
-      setActiveTimeslots(timeslots.data);
+      const list = timeslots.data?.map((i) => {
+        return { ...i, key: i.id };
+      });
+      setActiveTimeslots(list ? list : []);
       message.success(timeslots.message);
     } else {
       setActiveTimeslots([]);
       message.warning("Error while fetching.!");
     }
   }, [timeslots]);
-
-  console.log(activeTimeslots, "active");
 
   useEffect(() => {}, []);
 
@@ -272,19 +275,29 @@ const TimeslotManagement = () => {
   };
 
   const handleFormFinish = async (values) => {
-    const formattedValues = {
-      dateOfTimeslots: moment(values.date).format("YYYY-MM-DD HH:mm:ss"),
-      startTime: values.startTime.format("HH:mm"),
-      endTime: values.endTime.format("HH:mm"),
-      createdBy: user.id,
-      createdDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
-    };
-
     if (editingSlot) {
+      console.log(values);
+
+      const formattedValuesForUpdate = {
+        id: parseInt(editingSlot.id),
+        dateOfTimeslots: moment(editingSlot.date).format("YYYY-MM-DD HH:mm:ss"),
+        startTime: values.startTime.format("HH:mm"),
+        endTime: values.endTime.format("HH:mm"),
+        modifiedBy: user.id,
+      };
+      console.log(editingSlot, "ed");
+
       // Update an existing timeslot.
-      await updateTimeslot(editingSlot, editingSlot.id).unwrap();
+      await updateTimeslot(formattedValuesForUpdate).unwrap();
       message.success("Timeslot updated successfully.!");
     } else {
+      const formattedValues = {
+        dateOfTimeslots: moment(values.date).format("YYYY-MM-DD HH:mm:ss"),
+        startTime: values.startTime.format("HH:mm"),
+        endTime: values.endTime.format("HH:mm"),
+        createdBy: user.id,
+        createdDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      };
       // Create a new timeslot.
       await createTimeslot(formattedValues).unwrap();
       message.success("Timeslot created successfully.!");

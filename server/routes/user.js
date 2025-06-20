@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAllUsers,
   getUserByID,
+  getUserLocationsForCompletedAppointments,
   login,
   register,
   updateUser,
@@ -20,11 +21,14 @@ router.post("/login", login);
 
 //use upload.single('image') to accept a file with field name 'image'
 router.post("/register", imageUpload.single("image"), register);
-
+router.get(
+  "/getuserlocationsforcompletedappointments",
+  getUserLocationsForCompletedAppointments
+);
 //protected routes
 router.get("/:userID", getUserByID);
-router.delete("/:userID", deleteUser);
-router.put("/:userID/changepassword", authMiddeware, changePassword);
+router.delete("/deleteuser/:userID", deleteUser);
+router.put("/changepassword/:userID", authMiddeware, changePassword);
 router.put("/updateuser/:userID", updateUser);
 router.put("/updaterole/:userID", updateUserRole);
 router.get("/", getAllUsers);

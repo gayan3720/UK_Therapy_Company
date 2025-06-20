@@ -14,7 +14,7 @@ export const serviceApiSlice = createApi({
     }
     return headers;
   },
-  tagTypes: ["service", "services"],
+  tagTypes: ["serviceByID", "services"],
 
   endpoints: (builder) => ({
     createService: builder.mutation({
@@ -23,7 +23,7 @@ export const serviceApiSlice = createApi({
         method: "POST",
         data: data,
       }),
-      invalidatesTags: ["services"],
+      invalidatesTags: ["services", "serviceByID"],
     }),
     getAllServices: builder.query({
       query: () => ({
@@ -32,20 +32,27 @@ export const serviceApiSlice = createApi({
       }),
       providesTags: ["services"],
     }),
+    getServiceById: builder.query({
+      query: (id) => ({
+        url: `/services/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["serviceByID"],
+    }),
     updateService: builder.mutation({
       query: (data, id) => ({
         url: `/services/${data.id}`,
         method: "PUT",
         data: data,
       }),
-      invalidatesTags: ["services"],
+      invalidatesTags: ["services", "serviceByID"],
     }),
     deleteService: builder.mutation({
       query: (id) => ({
         url: `/services/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["services"],
+      invalidatesTags: ["services", "serviceByID"],
     }),
   }),
 });
@@ -55,4 +62,5 @@ export const {
   useGetAllServicesQuery,
   useUpdateServiceMutation,
   useDeleteServiceMutation,
+  useLazyGetServiceByIdQuery,
 } = serviceApiSlice;

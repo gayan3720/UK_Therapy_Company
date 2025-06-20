@@ -28,6 +28,9 @@
   /* Company Description Section */
   .about-company {
     padding: 60px 20px;
+    background: var(--gradient-primary);
+    margin-top: 20px;
+    border-radius: var(--radius-md);
 
     .animated-card {
       animation: fadeInLeft 1s ease-out;
@@ -53,8 +56,10 @@
 
   /* Statistics Section */
   .about-stats {
-    background: var(--surface);
+    background: var(--gradient-secondary);
     padding: 60px 20px;
+    margin-top: 20px;
+    border-radius: var(--radius-md);
 
     .stat-card {
       text-align: center;
@@ -79,6 +84,9 @@
   /* Reviews Section */
   .about-reviews {
     padding: 60px 20px;
+    margin-top: 20px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
 
     .review-form {
       label {

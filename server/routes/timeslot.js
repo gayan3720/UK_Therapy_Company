@@ -14,7 +14,7 @@ router.post("/getAllTimeslots", getAllTimeslots);
 router.get("/getTimeslotByID/:id", getTimeslotByID);
 router.get("/getTimeslotHistory", getTimeslotHistory);
 router.post("/createTimeslot", createTimestlot);
-router.put("/updateTimeslot/:id", updateTimeslot);
+router.post("/updateTimeslot", updateTimeslot);
 router.delete("/deleteTimeslot/:id", deleteTimeslot);
 
 export default router;

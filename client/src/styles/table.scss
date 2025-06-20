@@ -1,0 +1,34 @@
+@use "./theme.scss" as theme;
+
+/* ==========================================================================
+   1. Global Table Styles (unchanged)
+   ========================================================================== */
+.ant-table {
+  background: transparent;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+
+  &-thead {
+    > tr > th {
+      background: var(--primary) !important;
+      color: white !important;
+      font-weight: 600;
+      transition: var(--transition-smooth);
+    }
+  }
+
+  &-tbody {
+    > tr {
+      transition: var(--transition-fast);
+
+      > td {
+        border-bottom: 1px solid var(--border) !important;
+      }
+
+      &:hover > td {
+        background: var(--hover) !important;
+        color: var(--text) !important;
+      }
+    }
+  }
+}

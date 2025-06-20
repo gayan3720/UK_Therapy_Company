@@ -2,13 +2,15 @@
 
 /* Global styles referencing theme variables (defined in theme.scss) */
 .home-page {
-  background-color: var(--background);
+  background-color: var(--gradient-primary);
   color: var(--text);
-  padding: 0 20px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
 
   /* -------------------------------------------
    Animation Keyframes
--------------------------------------------- */
+  -------------------------------------------- */
   @keyframes fadeInUp {
     0% {
       opacity: 0;
@@ -22,7 +24,7 @@
 
   /* A reusable animation class */
   .animated-section {
-    animation: fadeInUp 1s ease-out both;
+    animation: fadeInUp 1s var(--transition-smooth) both;
   }
 
   /* Hero Section */
@@ -31,7 +33,7 @@
 
     .ant-carousel .slick-slide img {
       width: 100%;
-      height: 500px;
+      height: 80vh;
       object-fit: cover;
     }
 
@@ -41,7 +43,7 @@
       left: 10%;
       max-width: 500px;
       color: var(--text);
-      animation: fadeInUp 1s ease-out;
+      animation: fadeInUp 1s var(--transition-fast);
 
       h1,
       .ant-typography {
@@ -69,89 +71,233 @@
   /* Services Section */
   .services-section {
     padding: 50px 0;
-    background-color: var(--surface);
+    background: var(
+      --gradient-primary
+    ); // Set background to gradient using theme variable
+    /* Card-like background for the section */
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: 20px;
 
     h2 {
       text-align: center;
       color: var(--text);
+      font-size: 2rem; /* Larger title for better visibility */
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
       margin-bottom: 40px;
     }
 
     .ant-card {
+      background-color: var(--card-bg); /* Use card background from theme */
+      padding: 15px;
+      color: var(--text);
+      border: 2px solid var(--neon-accent-color);
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
       border-radius: var(--radius-md);
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: box-shadow var(--transition-smooth), transform 0.3s ease;
+      transition: box-shadow 0.3s ease, transform 0.3s ease,
+        background 0.3s ease;
       height: 550px;
 
       &:hover {
         box-shadow: var(--neon-glow);
         transform: translateY(-5px);
+        background: var(--gradient-accent); /* Change background on hover */
       }
 
       .ant-card-meta-title {
         color: var(--text);
+        font-weight: bold;
       }
 
       .ant-card-meta-description {
-        color: var(--text-soft);
+        color: var(--text);
+        font-size: 0.9rem;
       }
     }
 
     .service-info {
+      color: var(--text);
       margin-top: 10px;
+      div {
+        color: var(--text);
+      }
       p {
+        color: var(--text);
         margin-bottom: 0;
       }
+
+      strong {
+        color: var(--text);
+      }
+    }
+  }
+
+  /* Adding a hover effect for the Row container to shuffle the services */
+  .services-section .ant-row {
+    transition: all 0.3s ease-out;
+    &:hover {
+      cursor: pointer;
     }
   }
 
   /* About Section */
   .about-section {
-    padding: 50px 0;
-    background-color: var(--background);
-    animation: fadeInUp 1s ease-out;
+    background-color: var(--gradient-primary);
+    padding: 60px 0;
+    background: var(--gradient-primary);
+    animation: fadeInUp 1s var(--transition-smooth);
+    color: var(--text);
+    margin-top: 20px;
 
-    img {
-      width: 100%;
-      height: auto;
-      border-radius: var(--radius-md);
-    }
+    /* Card-like background for the section */
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
 
     h2 {
       color: var(--text);
+      font-size: 2rem; /* Larger title for better visibility */
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
 
-    p {
-      color: var(--text-soft);
+    .about-image {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .about-content {
+      padding: 30px;
+      background: var(
+        --gradient-secondary
+      ); /* Light background for the text content */
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      margin-top: -20px; /* Slightly overlap image for a modern look */
+      position: relative;
+      div {
+        margin-bottom: 15px;
+        line-height: 1.8;
+        font-size: 1rem;
+        color: var(--text);
+      }
+      /* Add some spacing around the content */
+      p {
+        margin-bottom: 15px;
+        line-height: 1.8;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .paragraph {
+        margin-bottom: 20px;
+      }
+
+      /* Animation on paragraph */
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    /* Responsive design for smaller screens */
+    @media (max-width: 768px) {
+      .about-content {
+        padding: 20px;
+      }
+
+      h2 {
+        font-size: 1.6rem;
+      }
     }
   }
 
   /* Video Section */
   .video-section {
-    padding: 50px 0;
-    animation: fadeInUp 1s ease-out;
-
+    background: var(--gradient-primary); /* Gradient background */
+    padding: 60px 20px;
+    animation: fadeInUp 1s var(--transition-smooth);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg); /* Larger shadow for depth */
+    margin-top: 40px;
+    color: var(--text);
+    .story {
+      background: var(
+        --gradient-secondary
+      ); /* Light background for the text content */
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+    /* Title Styling */
     h2 {
       color: var(--text);
+      font-size: 2rem; /* Larger title for better visibility */
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-transform: uppercase;
     }
 
+    /* Paragraph Styling */
     div {
       color: var(--text);
+      font-size: 1rem;
+      line-height: 1.6;
+      text-align: justify;
+      margin-bottom: 20px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    p {
+      color: var(--text-soft);
+      font-size: 1rem;
+      line-height: 1.6;
+      text-align: justify;
+      margin-bottom: 20px;
+      max-width: 80%; /* Ensures text doesn't stretch too wide */
+      margin-left: auto;
+      margin-right: auto;
     }
 
+    /* Video Wrapper for Aspect Ratio */
     .video-wrapper {
       position: relative;
       padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
       height: 0;
+      margin-top: 20px;
+      border-radius: var(--radius-md); /* Rounded corners for the video */
+      overflow: hidden;
+      box-shadow: var(--shadow-md); /* Subtle shadow around video */
+    }
 
-      iframe {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: none;
+    /* YouTube iframe inside the video wrapper */
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: var(--radius-md); /* Rounded corners */
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+      padding: 50px 10px; /* Reduce padding on mobile */
+
+      h2 {
+        font-size: 2rem; /* Adjust title size for smaller screens */
+      }
+
+      p {
+        font-size: 0.95rem;
+      }
+
+      .video-wrapper {
+        padding-bottom: 75%; /* Adjust aspect ratio for smaller screens */
       }
     }
   }
@@ -159,12 +305,21 @@
   /* Testimonials Section */
   .testimonials-section {
     padding: 50px 0;
-    background-color: var(--surface);
-    animation: fadeInUp 1s ease-out;
+    background: var(--gradient-primary);
+    animation: fadeInUp 1s var(--transition-smooth);
+    border: none;
+    /* Card-like background for the section */
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: 20px;
 
     h2 {
-      text-align: center;
       color: var(--text);
+      font-size: 2rem; /* Larger title for better visibility */
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
       margin-bottom: 40px;
     }
 
@@ -190,6 +345,7 @@
     }
   }
 }
+
 /* -------------------------------------------
    Responsive Styles
 -------------------------------------------- */

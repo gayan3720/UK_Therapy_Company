@@ -5,16 +5,18 @@ export const appointmentApiSlice = createApi({
   reducerPath: "appointmentApi",
   baseQuery: axiosBaseQuery({
     baseUrl: process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api",
+    prepareHeaders: (headers, { getState }) => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        return {
+          ...headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
+      return headers;
+    },
   }),
-  prepareHeaders: (headers, { getState }) => {
-    // Retrieve the token from local storage (or you could also use getState if stored in Redux)
-    const token = localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-  tagTypes: ["appointment", "appointments"],
+  tagTypes: ["appointment", "userAppointments"],
 
   endpoints: (builder) => ({
     getAllAppointments: builder.query({
@@ -24,7 +26,15 @@ export const appointmentApiSlice = createApi({
       }),
       providesTags: ["appointments"],
     }),
+    getUserAppointments: builder.query({
+      query: () => ({
+        url: "/appointments/getUserAppointments ",
+        method: "GET",
+      }),
+      providesTags: ["userAppointments"],
+    }),
   }),
 });
 
-export const { useGetAllAppointmentsQuery } = appointmentApiSlice;
+export const { useGetAllAppointmentsQuery, useGetUserAppointmentsQuery } =
+  appointmentApiSlice;

@@ -35,19 +35,22 @@ export const createTimestlot = async (req, res) => {
 };
 
 export const updateTimeslot = async (req, res) => {
-  const { slotID } = req.params;
-  const { dateOftimeslots, startTime, endTime, modifiedBy } = req.body;
-
-  const numericId = parseInt(slotID, 10);
-
-  if (isNaN(numericId)) {
-    return res.status(400).json({ error: "Invalid user id.!" });
-  }
+  const { id, dateOfTimeslots, startTime, endTime, modifiedBy } = req.body;
+  const slotID = id;
+  console.log(id, "id");
 
   try {
+    console.log(
+      "Updating with:",
+      slotID,
+      dateOfTimeslots,
+      startTime,
+      endTime,
+      modifiedBy
+    );
     const [result] = await pool.execute(
       "CALL sp_timeslots_updateTimeslot(?,?,?,?,?)",
-      [numericId, dateOftimeslots, startTime, endTime, modifiedBy]
+      [slotID, dateOfTimeslots, startTime, endTime, modifiedBy]
     );
 
     const row = result[0];
@@ -177,14 +180,22 @@ export const getAllTimeslots = async (req, res) => {
     );
     const rows = result[0];
     if (rows.length > 0) {
-      const newList = rows.map((i) => {
-        i.dateOfTimeslots = moment(i.dateOfTimeslots);
-        return i;
-      });
-
+      const rowsWithStringDates = rows.map((row) => ({
+        ...row,
+        dateOftimeslots: moment(row.dateOftimeslots).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ),
+        dayOfWeek: moment(row.dateOftimeslots).format("dddd"),
+      }));
       return res
         .status(200)
-        .json(responseTemp(1, "Successfully loaded the timeslots.!", newList));
+        .json(
+          responseTemp(
+            1,
+            "Successfully loaded the timeslots.!",
+            rowsWithStringDates
+          )
+        );
     } else {
       return res
         .status(201)

@@ -27,9 +27,9 @@ export const timeslotsApiSlice = createApi({
     }),
 
     updateTimeslot: builder.mutation({
-      query: (data, id) => ({
-        url: `/timeslots/updateTimeslot/${id}`,
-        method: "PUT",
+      query: (data) => ({
+        url: `/timeslots/updateTimeslot`,
+        method: "POST",
         data: data,
       }),
       invalidatesTags: ["timeslot", "timeslots"],

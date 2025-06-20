@@ -37,7 +37,18 @@
     &:hover {
       transform: translateY(-5px);
     }
+    /* make sure the cover element has a fixed height & hides overflow */
+    .ant-card-cover {
+      width: 100%; // full card width
+      height: 200px; // whatever fixed height you want
+      overflow: hidden; // crop anything outside
 
+      img {
+        width: 100%; // fill the container
+        height: 100%; // fill the container
+        object-fit: cover; // maintain aspect ratio & crop center
+      }
+    }
     .ant-card-meta-title {
       font-size: 18px;
       font-weight: 600;

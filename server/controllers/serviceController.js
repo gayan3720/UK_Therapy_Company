@@ -122,3 +122,34 @@ export const deleteService = async (req, res) => {
     res.status(500).json(responseTemp(0, "Internal server error.!", null));
   }
 };
+
+export const getServiceById = async (req, res) => {
+  const { id } = req.params;
+  const numericId = parseInt(id, 10);
+
+  if (isNaN(numericId)) {
+    return res.status(400).json(responseTemp(0, "Invalid service id.", null));
+  }
+
+  try {
+    const [rows] = await pool.execute("CALL sp_servies_getServiceById(?)", [
+      numericId,
+    ]);
+
+    if (!rows[0] || rows[0].length === 0) {
+      return res.status(404).json(responseTemp(0, "Service not found.", null));
+    }
+
+    const baseUrl =
+      process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
+    const service = rows[0][0];
+    service.imageUrl = service.image ? `${baseUrl}/${service.image}` : null;
+
+    res
+      .status(200)
+      .json(responseTemp(1, "Successfully loaded the service.", service));
+  } catch (error) {
+    console.error("Error fetching service by ID:", error);
+    res.status(500).json(responseTemp(0, "Internal server error.", null));
+  }
+};

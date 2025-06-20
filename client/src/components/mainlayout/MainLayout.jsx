@@ -8,16 +8,14 @@ import FloatingButton from "../floatingbutton/FloatingButton";
 
 const { Content } = Layout;
 
-const MainLayout = () => {
+const MainLayout = ({ width, scrolled, hideTop, hideBottom }) => {
   const location = useLocation();
   const [isAdminRoute, setIsAdminRoute] = useState(false);
   const [isSignRoute, setIsSignRoute] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [isTablet, setIsTablet] = useState(
-    window.innerWidth >= 768 && window.innerWidth < 1024
-  );
 
-  // Determine route type
+  const isMobile = width < 768;
+  const isTablet = width >= 768 && width < 1024;
+
   useEffect(() => {
     setIsAdminRoute(location.pathname.startsWith("/admin"));
     setIsSignRoute(
@@ -26,22 +24,17 @@ const MainLayout = () => {
     );
   }, [location]);
 
-  // Handle window resize for responsiveness
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
     <Layout className="main-layout">
       {/* Navbar (visible for all users) */}
       {!isSignRoute && (
-        <NavBar isAdminRoute={isAdminRoute} isMobile={isMobile} />
+        <NavBar
+          isAdminRoute={isAdminRoute}
+          width={width}
+          scrolled={scrolled}
+          hideTop={hideTop}
+          hideBottom={hideBottom}
+        />
       )}
 
       {/* Nested layout for sidebar and main content */}
@@ -53,7 +46,7 @@ const MainLayout = () => {
           className={`${!isSignRoute ? "main-content" : "main-content-sign"}`}
         >
           <Outlet />
-          <FloatingButton />
+          <FloatingButton isSignRoute={isSignRoute} />
         </Content>
       </Layout>
 

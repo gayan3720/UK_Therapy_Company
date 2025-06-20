@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
   Button,
-  Checkbox,
   Upload,
   notification,
   DatePicker,
@@ -14,57 +13,76 @@ import { motion } from "framer-motion";
 
 const { TextArea } = Input;
 
-const CustomForm = ({ inputs, onSubmit, initialValues }) => {
+const CustomForm = ({ inputs, onSubmit, initialValues = {} }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
-  // Initialize fileList from initialValues if provided (for file input with name "profileImage", adjust if needed)
-  const [fileList, setFileList] = useState(() => {
-    // If initialValues has a URL for the file input (for example, "profileImage"), use it
-    if (initialValues && initialValues.image) {
-      return [
+  // Populate form and fileList when initialValues change
+  useEffect(() => {
+    console.log(initialValues, "init");
+
+    form.setFieldsValue(initialValues);
+    if (initialValues.image) {
+      const initFile = initialValues.image;
+      const initFileUrl = initialValues.imageUrl;
+      setFileList([
         {
-          uid: "-1",
-          name: initialValues.image.split("/").pop(),
+          uid: initFile.uid || "-1",
+          name: initFile.name || initFile.split("/").pop(),
           status: "done",
-          url: initialValues.imageUrl, // This should be a full URL (e.g., http://localhost:5000/uploads/images/filename.jpg)
+          url: initFileUrl,
         },
-      ];
+      ]);
+    } else {
+      setFileList([]);
     }
-    return [];
-  });
-
-  const onFinish = (values) => {
-    setLoading(true);
-    console.log("Form values:", values);
-
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      notification.success({
-        message: "Form Submitted",
-        description: "Your form has been submitted successfully!",
-      });
-      form.resetFields();
-      setFileList([]); // Clear file list after submission
-      onSubmit(values); // Call the onSubmit prop
-    }, 2000);
-  };
+  }, [initialValues, form]);
 
   const beforeUpload = (file) => {
-    const isImageOrVideo =
+    const isValid =
       file.type.startsWith("image/") || file.type.startsWith("video/");
-    if (!isImageOrVideo) {
+    if (!isValid) {
       notification.error({
         message: "Invalid File Type",
         description: "You can only upload images or videos!",
       });
     }
-    return isImageOrVideo;
+    // Prevent auto upload
+    return false;
   };
 
-  const handleFileChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
+  const handleFileChange = ({ fileList: newList }) => {
+    setFileList(newList);
+  };
+
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      // Attach fileList as `image` value for parent
+      if (fileList.length > 0) {
+        values.image = fileList[0]; // include either originFileObj or url metadata
+      }
+      console.log(values, "values");
+
+      await onSubmit(values);
+
+      notification.success({
+        message: "Success",
+        description: "Form submitted successfully!",
+      });
+
+      form.resetFields();
+      setFileList([]);
+    } catch (error) {
+      console.error(error);
+      notification.error({
+        message: "Submission Error",
+        description: "There was a problem submitting the form.",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderInput = (input) => {
@@ -76,21 +94,6 @@ const CustomForm = ({ inputs, onSubmit, initialValues }) => {
             name={input.name}
             label={input.label}
             rules={input.rules}
-          >
-            <Input placeholder={input.placeholder} />
-          </Form.Item>
-        );
-      case "email":
-        return (
-          <Form.Item
-            key={input.name}
-            name={input.name}
-            label={input.label}
-            rules={[
-              { required: true, message: "Please enter your email!" },
-              { type: "email", message: "Please enter a valid email!" },
-              ...(input.rules || []),
-            ]}
           >
             <Input placeholder={input.placeholder} />
           </Form.Item>
@@ -134,6 +137,7 @@ const CustomForm = ({ inputs, onSubmit, initialValues }) => {
               style={{ width: "100%" }}
               format={input.format}
               placeholder={input.placeholder}
+              onWheel={(e) => e.currentTarget.blur()}
             />
           </Form.Item>
         );
@@ -148,23 +152,13 @@ const CustomForm = ({ inputs, onSubmit, initialValues }) => {
             <Upload
               beforeUpload={beforeUpload}
               onChange={handleFileChange}
-              fileList={fileList} // use the controlled fileList state
+              fileList={fileList}
               listType="picture"
               accept="image/*,video/*"
+              maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Click to Upload</Button>
+              <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
-          </Form.Item>
-        );
-      case "checkbox":
-        return (
-          <Form.Item
-            key={input.name}
-            name={input.name}
-            valuePropName="checked"
-            rules={input.rules}
-          >
-            <Checkbox>{input.label}</Checkbox>
           </Form.Item>
         );
       default:
@@ -174,26 +168,19 @@ const CustomForm = ({ inputs, onSubmit, initialValues }) => {
 
   return (
     <motion.div
-      className="custom-form"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
       <Form
         form={form}
-        name="custom-form"
-        onFinish={onFinish}
         layout="vertical"
         initialValues={initialValues}
+        onFinish={onFinish}
       >
         {inputs.map((input) => renderInput(input))}
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-            className="submit-button"
-          >
+          <Button type="primary" htmlType="submit" loading={loading}>
             Submit
           </Button>
         </Form.Item>
