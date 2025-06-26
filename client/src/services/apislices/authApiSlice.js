@@ -1,54 +1,31 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { axiosBaseQuery } from "../../utils/axiosBaseQuery";
+import { apiSlice } from "./apiSlice";
 
-export const authApiSlice = createApi({
-  reducerPath: "authApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api",
-  }),
-  prepareHeaders: (headers, { getState }) => {
-    // Retrieve the token from local storage (or you could also use getState if stored in Redux)
-    const token = localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-  tagTypes: ["User", "Users", "UserLocations"],
-
+export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
-      query: (userData) => ({
+      query: (payload) => ({
         url: "/users/register",
         method: "POST",
-        data: userData,
+        body: payload,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "User", id },
-        { type: "Users" },
-        "UserLocations",
-      ],
+      invalidatesTags: ["User", "Users", "UserLocations"],
     }),
 
     loginUser: builder.mutation({
-      query: (userData) => ({
+      query: (payload) => ({
         url: "/users/login",
         method: "POST",
-        data: userData,
+        body: payload,
       }),
     }),
 
     updateUserRole: builder.mutation({
-      query: (userData) => ({
-        url: `/users/updaterole/${userData.id}`,
+      query: (payload) => ({
+        url: `/users/updaterole/${payload.id}`,
         method: "PUT",
-        data: userData,
+        body: payload,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "User", id },
-        { type: "Users" },
-        "UserLocations",
-      ],
+      invalidatesTags: ["User", "Users", "UserLocations"],
     }),
 
     deleteUser: builder.mutation({
@@ -56,23 +33,19 @@ export const authApiSlice = createApi({
         url: `/users/${id}}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "User", id },
-        { type: "Users" },
-        "UserLocations",
-      ],
+      invalidatesTags: ["User", "Users", "UserLocations"],
     }),
 
     // GET endpoint to fetch a user by ID
     getUserById: builder.query({
       query: (id) => ({ url: `/users/${id}`, method: "GET" }),
-      providesTags: (result, error, id) => [{ type: "User", id }],
+      providesTags: ["User"],
     }),
 
     // GET endpoint to fetch all users
     getAllUsers: builder.query({
       query: () => ({ url: "/users", method: "GET" }),
-      providesTags: (result, error, id) => [{ type: "Users" }],
+      providesTags: ["Users"],
     }),
 
     getLocationsOfUsersAppointmentCompleted: builder.query({
@@ -80,7 +53,7 @@ export const authApiSlice = createApi({
         url: "/users/getuserlocationsforcompletedappointments",
         method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: "UserLocations" }],
+      providesTags: ["UserLocations"],
     }),
   }),
 });

@@ -9,13 +9,13 @@ import {
   Card,
   Carousel,
   DatePicker,
-  Modal,
   Typography,
   ConfigProvider,
   Table,
   Space,
   Tooltip,
   message,
+  Select,
 } from "antd";
 import { UserOutlined, EditOutlined, CheckOutlined } from "@ant-design/icons";
 import aboutDark from "../../assets/images/about-hero-dark.jpg";
@@ -24,20 +24,35 @@ import { useSelector } from "react-redux";
 import { getTheme } from "../../services/slices/themeSlice";
 import { useGetAllTimeslotsMutation } from "../../services/apislices/timeslotsApiSlice";
 import dayjs from "dayjs";
-import "antd/dist/reset.css";
-import Lottie from "lottie-react";
-import successAnimation from "../../assets/animations/success.json";
+
 import { motion } from "framer-motion";
 import Meta from "antd/es/card/Meta";
 import { getUser } from "../../services/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-import { useGetUserAppointmentsQuery } from "../../services/apislices/appointmentApiSlice";
+import {
+  useCreateAppointmentMutation,
+  useGetUserAppointmentsQuery,
+  useUpdateAppointmentMutation,
+} from "../../services/apislices/appointmentApiSlice";
 import DataFetchingLoader from "../../components/reusablecomponents/loaders/DataFetchingLoader";
-import { useLazyGetServiceByIdQuery } from "../../services/apislices/serviceApiSlice";
+import {
+  useGetAllServicesQuery,
+  useLazyGetServiceByIdQuery,
+} from "../../services/apislices/serviceApiSlice";
 import moment from "moment";
+import MessageModel from "../../components/cutommessage/MessageModel";
+import TextArea from "antd/es/input/TextArea";
+import {
+  getCountryCodes,
+  getDialCode,
+  getPhoneNumber,
+} from "../../utils/commonFunctions";
+
+import raw from "../../utils/country-codes.json";
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
+const { Option } = Select;
 
 const disabledDate = (current) => {
   return current && current < dayjs().startOf("day");
@@ -61,19 +76,84 @@ const Booking = () => {
   const { isLoading: isUserAppointmentsLoading, data: userAppointments } =
     useGetUserAppointmentsQuery();
   const [trigger] = useLazyGetServiceByIdQuery();
+  const { data: latestServices, isLoading: isAllServicesLoading } =
+    useGetAllServicesQuery();
+  const [
+    createAppointment,
+    {
+      data: createData,
+      isLoading: isCreateLoading,
+      isSuccess: isCreateSuccess,
+    },
+  ] = useCreateAppointmentMutation();
+  const [
+    updateAppointment,
+    {
+      data: updateData,
+      isLoading: isUpdateLoading,
+      isSuccess: isUpdateSuccess,
+    },
+  ] = useUpdateAppointmentMutation();
 
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   const [userData, setUserData] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [dateRange, setDateRange] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState("");
+
   const [selectedService, setSelectedService] = useState(null);
   const [previousOrders, setPreviousOrders] = useState([]);
   const [searchError, setSearchError] = useState(null);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapError, setMapError] = useState(false);
+  const [hasPendingAppointment, setHasPendingAppointment] = useState(false);
+  const [pendingAppointments, setPendingAppointments] = useState({});
+
+  const [visible, setVisible] = useState(false); // Controls message visibility
+  const [messageType, setMessageType] = useState(""); // Sets the type of message (success, error, etc.)
+  const [messageText, setMessageText] = useState(""); // Sets the message content
+  const [timeSlotsID, setTimeSlotsID] = useState(null);
+  const [formValues, setFormValues] = useState({});
+  const [showSuffix, setShowSuffix] = useState(true);
+
+  // Function to show the message
+  const triggerMessage = (type, text) => {
+    setMessageType(type);
+    setMessageText(text);
+    setVisible(true); // Make message visible
+  };
+
+  useEffect(() => {
+    if (isCreateSuccess) {
+      if (createData.result === 1 && createData.data) {
+        triggerMessage("success", createData.message);
+        navigate("/");
+      } else if (createData.result === 1 && !createData.data) {
+        triggerMessage("warning", createData.message);
+      } else {
+        triggerMessage(
+          "error",
+          "Internal server error. Please try again later."
+        );
+      }
+    }
+  }, [isCreateSuccess, createData]);
+
+  useEffect(() => {
+    if (isUpdateSuccess) {
+      if (updateData.result === 1 && updateData.data) {
+        triggerMessage("success", updateData.message);
+        navigate("/");
+      } else if (updateData.result === 1 && !updateData.data) {
+        triggerMessage("warning", updateData.message);
+      } else {
+        triggerMessage(
+          "error",
+          "Internal server error. Please try again later."
+        );
+      }
+    }
+  }, [isUpdateSuccess, updateData]);
 
   const [form] = Form.useForm();
 
@@ -88,6 +168,8 @@ const Booking = () => {
       form.setFieldsValue({
         ...user,
         address: user.address || "148 Strand, London WC2R 1JA, UK",
+        contactNumber: getPhoneNumber(user.contactNumber || "") || "",
+        countryCode: getDialCode(user.contactNumber || "") || "",
       });
     } else {
       form.setFieldsValue({
@@ -98,7 +180,9 @@ const Booking = () => {
     // Load saved service
     const savedService = localStorage.getItem("bookingSelectedService");
     if (savedService) {
-      setSelectedService(JSON.parse(savedService));
+      setSelectedService(savedService);
+    } else {
+      setSelectedService(null);
     }
   }, [user, theme]);
 
@@ -227,6 +311,7 @@ const Booking = () => {
 
   // Form change handler
   const handleFormValuesChange = (changedValues, allValues) => {
+    setFormValues(allValues);
     localStorage.setItem("bookingFormData", JSON.stringify(allValues));
 
     // Update map when address changes
@@ -238,7 +323,14 @@ const Booking = () => {
   // Previous appointments setup
   useEffect(() => {
     if (userAppointments && userAppointments.data) {
-      const newList = userAppointments.data.map((item) => ({
+      const filteredList = userAppointments.data?.filter((i) => {
+        return i.isPending !== 1;
+      });
+      const filteredListPending = userAppointments.data?.filter((i) => {
+        return i.isPending === 1;
+      });
+
+      const newList = filteredList.map((item) => ({
         ...item,
         key: item.id,
         status: item.isRejected
@@ -249,9 +341,44 @@ const Booking = () => {
           ? "Approved"
           : "Pending",
       }));
+
       setPreviousOrders(newList);
+      const pendingAppointment = userAppointments.data?.some(
+        (appointment) => appointment.isPending === 1
+      );
+
+      setHasPendingAppointment(pendingAppointment);
+      if (!pendingAppointment) {
+        setSelectedService(null);
+        localStorage.removeItem("bookingSelectedService");
+      } else {
+        setPendingAppointments(
+          filteredListPending ? filteredListPending[0] : []
+        );
+        setSelectedService({
+          id: filteredListPending[0].serviceID,
+          name: filteredListPending[0].serviceName,
+          description: filteredListPending[0].description,
+          price: filteredListPending[0].price,
+          image: filteredListPending[0].image,
+          imageUrl: filteredListPending[0].imageUrl,
+        });
+        localStorage.setItem(
+          "bookingSelectedService",
+          JSON.parse(
+            filteredListPending[0].serviceID,
+            filteredListPending[0].serviceName,
+            filteredListPending[0].description,
+            filteredListPending[0].price,
+            filteredListPending[0].image,
+            filteredListPending[0].imageUrl
+          )
+        );
+      }
     } else {
       setPreviousOrders([]);
+      setSelectedService(null);
+      localStorage.removeItem("bookingSelectedService");
     }
   }, [userAppointments]);
 
@@ -279,14 +406,16 @@ const Booking = () => {
       key: "action",
       render: (_, record) => (
         <Space>
-          <Tooltip title="Edit Appointment">
-            <Button
-              className="neon-button"
-              icon={<EditOutlined />}
-              onClick={() => handleEditAppointment(record.id)}
-              type="default"
-            />
-          </Tooltip>
+          {!record.isCompleted && (
+            <Tooltip title="Edit Appointment">
+              <Button
+                className="neon-button"
+                icon={<EditOutlined />}
+                onClick={() => handleEditAppointment(record.id)}
+                type="default"
+              />
+            </Tooltip>
+          )}
           <Tooltip title="Select Appointment">
             <Button
               className="neon-button"
@@ -302,7 +431,7 @@ const Booking = () => {
     },
   ];
 
-  const handleEditAppointment = () => {};
+  const handleEditAppointment = async () => {};
 
   // On selecting an appointment
   const handleUserAppointmentSelect = async (serviceID, appointmentAddress) => {
@@ -337,6 +466,7 @@ const Booking = () => {
       const formatTime = (time) => time.slice(0, 5);
       const date = slot.dateOftimeslots.split(" ")[0];
       const timeRange = {
+        timeSlotID: slot.id,
         timeRange: `${formatTime(slot.startTime)} - ${formatTime(
           slot.endTime
         )}`,
@@ -346,7 +476,11 @@ const Booking = () => {
       if (existing) {
         existing.times.push(timeRange);
       } else {
-        grouped.push({ date: date, day: slot.dayOfWeek, times: [timeRange] });
+        grouped.push({
+          date: date,
+          day: slot.dayOfWeek,
+          times: [timeRange],
+        });
       }
     });
     return grouped;
@@ -385,17 +519,18 @@ const Booking = () => {
     if (dateRange.length === 2) {
       onSearch();
     } else {
-      message.warning("Please select a date range first");
+      setSearchError("Please select a valid date range.");
+      setTimeSlots([]);
     }
   };
 
   // Handle time slot selection
-  const handleTimeSlotClick = (date, time) => {
+  const handleTimeSlotClick = (date, time, slotID) => {
     const selected = `${date} - ${time}`;
     setSelectedTimeSlot(selected);
-    setSelectedMessage(selected);
-    setIsModalVisible(true);
-    setTimeout(() => setIsModalVisible(false), 10000);
+    triggerMessage("success", `You selected ${selected} timeslot.! `);
+    setTimeSlotsID(slotID);
+    console.log(slotID, "selected time slot ID");
   };
 
   // Render time slots
@@ -416,6 +551,8 @@ const Booking = () => {
         </h3>
         <div className="slot-buttons">
           {daySlot.times.map((time, tIdx) => {
+            console.log(daySlot, time, tIdx, "log");
+
             const isBooked = time.isBooked === 1;
             const isSelected =
               selectedTimeSlot === `${daySlot.date} - ${time.timeRange}`;
@@ -425,7 +562,11 @@ const Booking = () => {
                 type={isSelected ? "primary" : "default"}
                 disabled={isBooked}
                 onClick={() =>
-                  handleTimeSlotClick(daySlot.date, time.timeRange)
+                  handleTimeSlotClick(
+                    daySlot.date,
+                    time.timeRange,
+                    time.timeSlotID
+                  )
                 }
                 className={`neon-button ${isSelected ? "selected" : ""}`}
                 style={{
@@ -450,15 +591,63 @@ const Booking = () => {
 
   // Form validation
   const isFormValid = () => {
-    return (
-      form.isFieldsTouched(true) &&
-      !form.getFieldsError().some(({ errors }) => errors.length)
-    );
+    return !form.getFieldsError().some(({ errors }) => errors.length);
   };
 
   const isRequestDisabled = !isFormValid() || !selectedTimeSlot;
 
-  if (isUserAppointmentsLoading) return <DataFetchingLoader />;
+  const handleSaveAppointment = async () => {
+    if (!hasPendingAppointment) {
+      const data = {
+        serviceID: selectedService.id,
+        timeslotID: timeSlotsID,
+        paymentMethod: "Cash",
+        comments: formValues.comment || "",
+        age: parseInt(formValues.age, 10) || null,
+        address: formValues.address || "148 Strand, London WC2R 1JA, UK",
+        serviceRequestedDate: moment(new Date()).format("YYYY-MM-DD HH:mm"),
+        contactNumber:
+          formValues.countryCode + " " + formValues.contactNumber || null,
+      };
+      console.log(data, "data to be sent");
+      await createAppointment(data).unwrap();
+    } else {
+      const data = {
+        appointmentID: pendingAppointments.id,
+        serviceID: selectedService.id,
+        timeslotID: timeSlotsID,
+        paymentMethod: "Cash",
+        comments: formValues.comment || "",
+        age: parseInt(formValues.age, 10) || null,
+        address: formValues.address || "148 Strand, London WC2R 1JA, UK",
+        serviceRequestedDate: moment(new Date()).format("YYYY-MM-DD HH:mm"),
+        contactNumber:
+          formValues.countryCode + " " + formValues.contactNumber || null,
+      };
+      await updateAppointment(data).unwrap();
+    }
+  };
+
+  const onSelectService = (data) => {
+    setSelectedService(data);
+  };
+
+  const onCountryCodeSearch = (value) => {};
+
+  const handleChange = (value) => {
+    // Hide suffix once a value is selected
+    setShowSuffix(false);
+  };
+
+  const countryArray = getCountryCodes(raw);
+
+  if (
+    isUserAppointmentsLoading ||
+    isAllServicesLoading ||
+    isCreateLoading ||
+    isUpdateLoading
+  )
+    return <DataFetchingLoader />;
 
   return (
     <ConfigProvider
@@ -497,6 +686,32 @@ const Booking = () => {
         <section className="booking-form-section">
           <div className="booking-card">
             <Row gutter={[24, 24]}>
+              {/* Column 1: previous orders + latest services */}
+              <Col xs={24} md={12}>
+                {previousOrders.length > 0 && (
+                  <>
+                    <Title
+                      level={3}
+                      style={{ marginTop: 24, textTransform: "uppercase" }}
+                    >
+                      Your Previous Appointments
+                    </Title>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                      <Table
+                        columns={columns}
+                        dataSource={previousOrders}
+                        rowKey="id"
+                        pagination={false}
+                        style={{ marginBottom: 24 }}
+                      />
+                    </motion.div>
+                  </>
+                )}
+              </Col>
               {/* User Details Form */}
               <Col xs={24} md={12}>
                 <motion.div
@@ -542,21 +757,13 @@ const Booking = () => {
 
                     <Row gutter={16}>
                       <Col xs={24} sm={12}>
-                        <Form.Item
-                          label="First Name"
-                          name="firstName"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
+                        <Form.Item label="First Name" name="firstName">
+                          <Input disabled />
                         </Form.Item>
                       </Col>
                       <Col xs={24} sm={12}>
-                        <Form.Item
-                          label="Last Name"
-                          name="lastName"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
+                        <Form.Item label="Last Name" name="lastName">
+                          <Input disabled />
                         </Form.Item>
                       </Col>
                     </Row>
@@ -572,26 +779,119 @@ const Booking = () => {
                         </Form.Item>
                       </Col>
                       <Col xs={24} sm={12}>
-                        <Form.Item
-                          label="Username"
-                          name="username"
-                          rules={[{ required: true }]}
-                        >
-                          <Input />
+                        <Form.Item label="Username" name="username">
+                          <Input disabled />
                         </Form.Item>
                       </Col>
                     </Row>
-
                     <Row gutter={16}>
                       <Col xs={24} sm={12}>
-                        <Form.Item
-                          label="Email"
-                          name="email"
-                          rules={[{ required: true, type: "email" }]}
-                        >
-                          <Input />
+                        <Form.Item label="Comment" name="comment">
+                          <TextArea
+                            placeholder="Add your comment here.."
+                            autoComplete="off"
+                            maxLength={200}
+                            rows={1}
+                            autoSize={{ minRows: 1, maxRows: 2 }}
+                          />
                         </Form.Item>
                       </Col>
+                      <Col xs={24} sm={12}>
+                        {" "}
+                        <Form.Item label="Email" name="email">
+                          <Input disabled />
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col xs={24} sm={12}>
+                        <Form.Item label="Payment Method" name="paymentMethod">
+                          <Input disabled defaultValue={"Cash"} />
+                        </Form.Item>
+                      </Col>
+                      <Col xs={24} sm={12}>
+                        {" "}
+                        <Form.Item
+                          label="Phone Number"
+                          name="contactNumber"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please enter your phone number.!",
+                            },
+                          ]}
+                          style={{ marginBottom: 16 }}
+                        >
+                          <Input.Group compact>
+                            <Form.Item
+                              name="countryCode"
+                              noStyle
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Select country code.!",
+                                },
+                              ]}
+                            >
+                              <Select
+                                onChange={handleChange}
+                                showSearch
+                                popupMatchSelectWidth={false}
+                                placement="bottomRight"
+                                optionFilterProp="children"
+                                // this tells it to filter against the Option's children text
+                                filterOption={(input, option) =>
+                                  (option?.children ?? "")
+                                    .toString()
+                                    .toLowerCase()
+                                    .includes(input.toLowerCase())
+                                }
+                                className="prefix-select"
+                                style={{ width: 50 }}
+                                onSearch={onCountryCodeSearch}
+                                suffixIcon={
+                                  showSuffix ? (
+                                    <span
+                                      style={{
+                                        fontSize: "16px",
+                                        color: "var(--text)",
+                                      }}
+                                    >
+                                      🌐
+                                    </span>
+                                  ) : null
+                                }
+                              >
+                                {countryArray.map((cc) => (
+                                  <Option key={cc.iso2} value={cc.dial_code}>
+                                    {cc.iso2.toUpperCase()} {cc.dial_code}
+                                  </Option>
+                                ))}
+                              </Select>
+                            </Form.Item>
+
+                            <Form.Item
+                              name="contactNumber"
+                              noStyle
+                              rules={[
+                                {
+                                  pattern: /^[0-9]{6,14}$/,
+                                  message: "Must be 6–14 digits.!",
+                                },
+                              ]}
+                            >
+                              <Input
+                                style={{ width: "calc(100% - 50px)" }}
+                                placeholder="e.g. 772123456"
+                                className="phone-input"
+                              />
+                            </Form.Item>
+                          </Input.Group>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                    <Row gutter={16}>
+                      <Col xs={24} sm={12}></Col>
                       <Col xs={24} sm={12}>
                         <Form.Item
                           label="Address"
@@ -599,7 +899,7 @@ const Booking = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Please enter or select an address",
+                              message: "Please enter or select an address.!",
                             },
                           ]}
                         >
@@ -694,7 +994,7 @@ const Booking = () => {
                       style={{ border: "1px solid var(--primary)" }}
                     >
                       <Meta
-                        title={selectedService.title}
+                        title={selectedService.name}
                         description={selectedService.description}
                       />
                       <p>
@@ -708,36 +1008,40 @@ const Booking = () => {
                   ) : (
                     <Title level={3}>Please select a service</Title>
                   )}
-
-                  {previousOrders.length > 0 && (
-                    <>
-                      <Title level={4} style={{ marginTop: 24 }}>
-                        Your Previous Appointments
-                      </Title>
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
+                </motion.div>
+              </Col>
+              <Col xs={24} md={12}>
+                <div className="latest-services">
+                  {latestServices &&
+                    latestServices.data?.map((s) => (
+                      <Card
+                        key={s.id}
+                        hoverable
+                        className={`service-card ${
+                          selectedService?.id === s.id ? "selected" : ""
+                        }`}
+                        cover={<img src={s.imageUrl} alt={s.title} />}
+                        onClick={() => onSelectService(s)}
                       >
-                        <Table
-                          columns={columns}
-                          dataSource={previousOrders}
-                          rowKey="id"
-                          pagination={false}
-                          style={{ marginBottom: 24 }}
+                        <Meta
+                          title={s.name}
+                          description={`${s.description} $`}
                         />
-                      </motion.div>
-                    </>
-                  )}
-
+                        <p>
+                          <strong>Duration:</strong> {s.duration} hrs
+                        </p>
+                        <p>
+                          <strong>Price:</strong> {s.price} $
+                        </p>
+                      </Card>
+                    ))}
                   <Button
-                    className="neon-button"
+                    className="explore-button"
                     onClick={() => navigate("/services")}
-                    style={{ marginTop: 16 }}
                   >
                     Explore More Services
                   </Button>
-                </motion.div>
+                </div>
               </Col>
             </Row>
           </div>
@@ -745,7 +1049,15 @@ const Booking = () => {
 
         {/* Time Slots Section */}
         <section className="time-slots-section">
-          <Title level={3}>Select a Time Slot</Title>
+          {hasPendingAppointment ? (
+            <Title level={3}>{`You have selected ${
+              pendingAppointments.startTime
+            } - ${pendingAppointments.endTime} on ${moment(
+              pendingAppointments.dateOftimeslots
+            ).format("MM/DD/YYYY")}`}</Title>
+          ) : (
+            <Title level={3}>Select a Time Slot</Title>
+          )}
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col xs={24} md={6}>
               <RangePicker
@@ -795,52 +1107,21 @@ const Booking = () => {
             type="primary"
             className="neon-button"
             disabled={isRequestDisabled}
-            onClick={() => console.log("Service Requested!")}
+            onClick={handleSaveAppointment}
             style={{ width: "100%", marginTop: "20px" }}
           >
-            Request Service
+            {hasPendingAppointment ? "Edit Appointment" : "Request Appointment"}
           </Button>
         </section>
 
         {/* Modal for time slot selection */}
-        <Modal
-          title={null}
-          footer={null}
-          centered
-          open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          bodyStyle={{
-            textAlign: "center",
-            padding: "20px 24px",
-            width: "400px",
-            height: "300px",
-            borderRadius: "8px",
-          }}
-          style={{
-            position: "fixed",
-            bottom: 0,
-            right: "20px",
-            zIndex: 9999,
-          }}
-          className="message-modal"
-        >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Lottie
-              animationData={successAnimation}
-              style={{ height: 100, marginBottom: "16px" }}
-              loop={false}
-            />
-            <Title level={4}>Time Slot Selected</Title>
-            <p style={{ fontSize: "14px", marginTop: "10px" }}>
-              You selected: <strong>{selectedMessage}</strong>
-            </p>
-          </motion.div>
-        </Modal>
       </div>
+      <MessageModel
+        messageType={messageType}
+        messageText={messageText}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </ConfigProvider>
   );
 };

@@ -251,7 +251,7 @@
           border: 3px solid var(--gradiant-secondary);
           box-shadow: 0 0 15px var(--neon-glow);
           transition: transform 0.4s ease, box-shadow 0.4s ease;
-          width: 100%;
+          width: 60%;
         }
 
         &:hover {
@@ -270,7 +270,7 @@
       border-bottom: none;
       display: flex !important;
       align-items: center;
-      margin-left: 60px;
+      justify-content: center;
       flex-wrap: nowrap;
       overflow: hidden;
       white-space: nowrap;
@@ -347,6 +347,7 @@
     .search-wrapper {
       width: 300px;
       display: flex;
+      flex-wrap: wrap;
     }
 
     /* Theme Toggle */
@@ -519,6 +520,10 @@
   .ant-popconfirm .ant-popconfirm-buttons {
     width: 90%;
   }
+  .ant-badge-count {
+    font-size: 12px;
+    padding: 0 4px;
+  }
 }
 /* ========================================================================== 
      5. Media Queries for Responsiveness
@@ -528,7 +533,6 @@
 @media (max-width: 1024px) {
   .navbar {
     .navbar-top-row {
-      height: auto;
       padding: 0.5rem 1rem;
       font-size: 0.85rem;
       .top-left,
@@ -547,8 +551,9 @@
       flex-wrap: wrap;
       gap: 0.5rem;
 
-      .desktop-menu {
-        display: none !important;
+      .search-wrapper {
+        flex-wrap: nowrap;
+        max-width: 175px;
       }
       /* Keep search bar visible on tablet */
     }
@@ -584,7 +589,7 @@
         display: none !important;
       }
       .search-wrapper {
-        width: 175px !important;
+        max-width: 175px !important;
       }
       /* Show only the hamburger toggler on the right */
       .mobile-menu-toggle {

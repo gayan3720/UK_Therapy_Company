@@ -4,20 +4,14 @@ import authSlice from "../services/slices/authSlice";
 import serviceSlice from "../services/slices/serviceSlice";
 import appointmentSlice from "../services/slices/appointmentSlice";
 import timeslotSlice from "../services/slices/timeslotSlice";
-import { authApiSlice } from "../services/apislices/authApiSlice";
-import { serviceApiSlice } from "../services/apislices/serviceApiSlice";
-import { appointmentApiSlice } from "../services/apislices/appointmentApiSlice";
-import { timeslotsApiSlice } from "../services/apislices/timeslotsApiSlice";
-import { chatApiSlice } from "../services/apislices/chatApiSlice";
+import notificationsSlice from "../services/slices/notificationSlice";
+
+import { apiSlice } from "../services/apislices/apiSlice";
 
 export const store = configureStore({
   reducer: {
     //api slices
-    [authApiSlice.reducerPath]: authApiSlice.reducer,
-    [serviceApiSlice.reducerPath]: serviceApiSlice.reducer,
-    [appointmentApiSlice.reducerPath]: appointmentApiSlice.reducer,
-    [timeslotsApiSlice.reducerPath]: timeslotsApiSlice.reducer,
-    [chatApiSlice.reducerPath]: chatApiSlice.reducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
 
     //slices
     theme: themeSlice,
@@ -25,13 +19,8 @@ export const store = configureStore({
     service: serviceSlice,
     appointment: appointmentSlice,
     timeslot: timeslotSlice,
+    notifications: notificationsSlice,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      authApiSlice.middleware,
-      serviceApiSlice.middleware,
-      appointmentApiSlice.middleware,
-      timeslotsApiSlice.middleware,
-      chatApiSlice.middleware
-    ),
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });

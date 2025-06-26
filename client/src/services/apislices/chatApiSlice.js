@@ -1,21 +1,6 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { axiosBaseQuery } from "../../utils/axiosBaseQuery";
+import { apiSlice } from "./apiSlice";
 
-export const chatApiSlice = createApi({
-  reducerPath: "chatApi",
-  baseQuery: axiosBaseQuery({
-    baseUrl: process.env.REACT_APP_API_BASE_URL || "http://localhost:5000/api",
-  }),
-  prepareHeaders: (headers, { getState }) => {
-    // Retrieve the token from local storage (or you could also use getState if stored in Redux)
-    const token = localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-  tagTypes: ["history", "chatHeads"],
-
+export const chatApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getChatHistory: builder.query({
       query: (users) => ({

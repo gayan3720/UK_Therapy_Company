@@ -11,7 +11,10 @@ import {
   updateUserRole,
 } from "../controllers/userController.js";
 import { imageUpload } from "../middleware/uploadMiddleware.js";
-import { authMiddeware, authorizeRoles } from "../middleware/authMiddleware.js";
+import {
+  authMiddleware,
+  authorizeRoles,
+} from "../middleware/authMiddleware.js";
 import { roles } from "../utils/enum.js";
 
 const router = express.Router();
@@ -28,7 +31,7 @@ router.get(
 //protected routes
 router.get("/:userID", getUserByID);
 router.delete("/deleteuser/:userID", deleteUser);
-router.put("/changepassword/:userID", authMiddeware, changePassword);
+router.put("/changepassword/:userID", authMiddleware, changePassword);
 router.put("/updateuser/:userID", updateUser);
 router.put("/updaterole/:userID", updateUserRole);
 router.get("/", getAllUsers);

@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Layout, Menu, Input, Avatar, Button, Popconfirm, Tooltip } from "antd";
+import {
+  Layout,
+  Menu,
+  Input,
+  Avatar,
+  Button,
+  Popconfirm,
+  Tooltip,
+  Badge,
+} from "antd";
 import {
   UserOutlined,
   BellOutlined,
@@ -21,6 +30,11 @@ import GBFlag from "../../../assets/images/gb.png"; // Import GB Flag image
 import FRFlag from "../../../assets/images/fr.png"; // Import FR Flag image
 import ESFlag from "../../../assets/images/es.png"; // Import ES Flag image
 import LottieAninationMenu from "../../lottieanimation/LottieAninationMenu";
+import {
+  useGetUserAppointmentsQuery,
+  useLazyGetUserAppointmentsQuery,
+} from "../../../services/apislices/appointmentApiSlice";
+import DataFetchingLoader from "../../reusablecomponents/loaders/DataFetchingLoader";
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -108,8 +122,30 @@ const NavBar = ({ isAdminRoute, scrolled, width, hideTop, hideBottom }) => {
   const token = localStorage.getItem("token");
   const { t, i18n } = useTranslation();
 
+  const [
+    trigger,
+    { isLoading: isUserAppointmentsLoading, data: userAppointments },
+  ] = useLazyGetUserAppointmentsQuery();
+
   const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
+  const [hasPendingAppointment, setHasPendingAppointment] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    trigger();
+  }, [token]);
+
+  useEffect(() => {
+    if (userAppointments) {
+      const pendingAppointment = userAppointments.data?.some(
+        (appointment) => appointment.isPending === 1
+      );
+
+      setHasPendingAppointment(pendingAppointment);
+    }
+  }, [userAppointments]);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -140,7 +176,37 @@ const NavBar = ({ isAdminRoute, scrolled, width, hideTop, hideBottom }) => {
     { key: "/about", label: <Link to="/about">{t("aboutUs")}</Link> },
     { key: "/services", label: <Link to="/services">{t("services")}</Link> },
     { key: "/contact", label: <Link to="/contact">{t("contact")}</Link> },
-    { key: "/book", label: <Link to="/book">{t("bookNow")}</Link> },
+    user.roleID !== userRoles.admin && {
+      key: "/book",
+      label: (
+        <Link
+          to="/book"
+          style={{
+            position: "relative", // Make the Link container relative for absolute positioning
+            display: "inline-block", // Ensures it's inline-block for proper positioning
+          }}
+        >
+          {t("bookNow")}
+          {/* Notification Badge for Pending Appointment */}
+          {hasPendingAppointment && (
+            <Badge
+              count={1}
+              style={{
+                backgroundColor: "red", // Red color for the badge
+                opacity: 0.7,
+                position: "absolute", // Position the badge inside the Link
+                top: "-25px", // Push the badge upwards
+                right: "-15px", // Position the badge to the right
+                fontSize: "12px", // Small font size for the badge
+                padding: "0px", // Remove padding
+                boxSizing: "border-box", // Ensure correct sizing
+                verticalAlign: "text-top",
+              }}
+            />
+          )}
+        </Link>
+      ),
+    },
     !(width < 768) &&
       (user.roleID === userRoles.admin ||
         user.roleID === userRoles.subAdmin) && {
@@ -182,6 +248,8 @@ const NavBar = ({ isAdminRoute, scrolled, width, hideTop, hideBottom }) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  if (isUserAppointmentsLoading) return <DataFetchingLoader />;
 
   return (
     <Header
@@ -255,7 +323,7 @@ const NavBar = ({ isAdminRoute, scrolled, width, hideTop, hideBottom }) => {
           </Link>
         </div>
 
-        {width < 768 || (768 <= width && width < 1024) ? null : (
+        {width < 768 ? null : (
           <Menu
             theme="light"
             className="desktop-menu"

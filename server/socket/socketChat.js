@@ -1,10 +1,16 @@
 import pool from "../models/db.js";
 
-export const registerUser = (socket, { userId }) => {
+export const registerUser = (socket, { userId, roleID }) => {
   if (!userId) return;
   const personalRoom = `user_${userId}`;
   socket.join(personalRoom);
   console.log(`Socket ${socket.id} joined personal room ${personalRoom}`);
+
+  // If user is admin, also join shared admin room
+  if (roleID === 1) {
+    socket.join("user_admin");
+    console.log(`Admin user ${userId} joined admin room`);
+  }
 };
 
 // Called when a socket emits 'joinRoom'
@@ -78,4 +84,17 @@ export const handleTyping = (socket, data) => {
  */
 export const handleDisconnect = (socket) => {
   console.log("Client disconnected:", socket.id);
+};
+
+/**
+ * Emit a notification event to a specific user’s room.
+ */
+export const emitNotificationToUser = (userId, appointmentId, message, io) => {
+  const userRoom = `user_${userId}`;
+  io.to(userRoom).emit("notification", { appointmentId, message });
+};
+
+export const emitNotificationToAdminRoom = (appointmentId, message, io) => {
+  const adminRoom = "user_admin";
+  io.to(adminRoom).emit("notification", { appointmentId, message });
 };

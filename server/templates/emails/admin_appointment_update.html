@@ -1,0 +1,147 @@
+<!-- templates/emails/admin_appointment_update.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Appointment Updated (ID: {{appointmentId}})</title>
+    <style>
+      /* Basic inline styles; adjust or move to CSS as desired */
+      body {
+        font-family: Arial, sans-serif;
+        color: #333;
+        line-height: 1.4;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      h2 {
+        color: #2c3e50;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #f5f5f5;
+      }
+      .section {
+        margin-bottom: 20px;
+      }
+      .footer {
+        font-size: 0.9em;
+        color: #777;
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
+      a.button {
+        display: inline-block;
+        padding: 10px 16px;
+        background-color: #3498db;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Appointment Updated</h2>
+      <p>Hello Admin,</p>
+      <p>
+        The following appointment has been updated by a user. Please review the
+        changes below:
+      </p>
+
+      <div class="section">
+        <h3>Appointment & User Details</h3>
+        <table>
+          <tr>
+            <th>Appointment ID</th>
+            <td>{{appointmentId}}</td>
+          </tr>
+          <tr>
+            <th>User Name</th>
+            <td>{{userName}}</td>
+          </tr>
+          <tr>
+            <th>User Email</th>
+            <td>{{userEmail}}</td>
+          </tr>
+          {{#if userPhone}}
+          <tr>
+            <th>User Phone</th>
+            <td>{{userPhone}}</td>
+          </tr>
+          {{/if}}
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>Before Update</h3>
+        <table>
+          <tr>
+            <th>Service</th>
+            <td>{{old.serviceName}}</td>
+          </tr>
+          <tr>
+            <th>Date & Time</th>
+            <td>{{old.requestedDate}}</td>
+          </tr>
+          <tr>
+            <th>Payment Method</th>
+            <td>{{old.paymentMethod}}</td>
+          </tr>
+          <tr>
+            <th>Comments</th>
+            <td>{{old.comments}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="section">
+        <h3>After Update</h3>
+        <table>
+          <tr>
+            <th>Service</th>
+            <td>{{new.serviceName}}</td>
+          </tr>
+          <tr>
+            <th>Date & Time</th>
+            <td>{{new.requestedDate}}</td>
+          </tr>
+          <tr>
+            <th>Payment Method</th>
+            <td>{{new.paymentMethod}}</td>
+          </tr>
+          <tr>
+            <th>Comments</th>
+            <td>{{new.comments}}</td>
+          </tr>
+        </table>
+      </div>
+
+      {{#if adminLink}}
+      <p>
+        <a href="{{adminLink}}" class="button"
+          >View Appointment in Admin Panel</a
+        >
+      </p>
+      {{/if}}
+
+      <p class="footer">
+        This is an automated notification. If you have questions, please contact
+        support.
+      </p>
+    </div>
+  </body>
+</html>

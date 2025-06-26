@@ -25,6 +25,9 @@ const io = new Server(server, {
   },
 });
 
+// store io
+app.set("io", io);
+
 registerSocketHandlers(io);
 
 // Check if the swagger.json file exists

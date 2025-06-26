@@ -7,7 +7,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
 //basic authentication middleware that verifies jwt token
-export const authMiddeware = (req, res, next) => {
+export const authMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
   console.log(authHeader);
 

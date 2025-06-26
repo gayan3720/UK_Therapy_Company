@@ -13,3 +13,21 @@ export const shuffleArray = (array) => {
   }
   return shuffledArray;
 };
+
+export const getCountryCodes = (raw) => {
+  return Object.entries(raw).map(([iso2, info]) => ({
+    iso2: iso2.toLowerCase(),
+    country: info.name,
+    dial_code: `+${info.phone[0]}`,
+  }));
+};
+
+export const getDialCode = (phoneString) => {
+  return phoneString.split(" ")[0];
+};
+
+// Get the rest of the number (after the first space)
+export const getPhoneNumber = (phoneString) => {
+  const index = phoneString.indexOf(" ");
+  return index !== -1 ? phoneString.substring(index + 1) : "";
+};

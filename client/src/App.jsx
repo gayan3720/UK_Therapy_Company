@@ -15,6 +15,8 @@ import { useLazyGetUserByIdQuery } from "./services/apislices/authApiSlice";
 import { getUser, setUser } from "./services/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useContainerWidth } from "./components/customhooks/useContainerWidth";
+import { io } from "socket.io-client";
+import { addNotification } from "./services/slices/notificationSlice";
 
 // Lazy load pages
 const SignIn = lazy(() => import("./pages/signin/SignIn"));
@@ -57,6 +59,9 @@ const PrivateRoute = ({ redirectPath = "/signin" }) => {
 const AppWrapper = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const token = localStorage.getItem("token");
+  const SOCKET_URL =
+    process.env.REACT_APP_SOCKET_URL || "http://localhost:8080";
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [trigger, { data: user, isLoading, error }] = useLazyGetUserByIdQuery();
@@ -64,6 +69,36 @@ const AppWrapper = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hideTop, setHideTop] = useState(false);
   const [hideBottom, setHideBottom] = useState(false);
+
+  useEffect(() => {
+    if (!token || !user?.id) return;
+
+    // Connect socket
+    const socket = io(SOCKET_URL, {
+      auth: {
+        token, // if your backend uses auth middleware
+      },
+    });
+
+    // On connect, register user to their personal room
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+      // send userId and roleID if needed
+      socket.emit("register", { userId: user.id, roleID: user.roleID });
+    });
+
+    // Listen for notification events. Backend should emit event name "notification".
+    socket.on("notification", (data) => {
+      // data: { appointmentId, message } or whatever shape backend emits
+      console.log("Received notification via socket:", data);
+      dispatch(addNotification(data));
+    });
+
+    // Cleanup on unmount or user logout
+    return () => {
+      socket.disconnect();
+    };
+  }, [dispatch, token, user]);
 
   useEffect(() => {
     const handleScroll = () => {

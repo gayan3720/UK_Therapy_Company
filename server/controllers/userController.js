@@ -11,6 +11,7 @@ const saltRounds = 10;
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
+  console.log(username, password);
 
   try {
     //retrieve user bt username
@@ -95,7 +96,6 @@ export const getUserLocationsForCompletedAppointments = async (req, res) => {
     );
 
     const result = rows[0]; // Make sure the result comes from the correct row
-    console.log(rows, "rows");
 
     if (result.length === 0) {
       return res
@@ -222,11 +222,8 @@ export const updateUser = async (req, res) => {
 };
 
 export const updateUserRole = async (req, res) => {
-  console.log(req.params, "reqparams");
-
   const { userID } = req.params;
   const { roleID, modifiedBy } = req.body;
-  console.log(req.body);
 
   try {
     // Check if the user exists

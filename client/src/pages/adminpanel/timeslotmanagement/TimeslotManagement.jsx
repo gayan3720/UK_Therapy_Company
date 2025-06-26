@@ -1,35 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Modal, Form, Radio, message, Popconfirm } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Radio,
+  message,
+  Popconfirm,
+  Badge,
+} from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import moment from "moment";
 import CustomForm from "../../../components/reusablecomponents/form/CustomForm";
 import { disabledDateFromToday } from "../../../utils/commonFunctions";
 import {
   useCreateTimeslotMutation,
+  useDeleteTimeslotMutation,
   useGetAllTimeslotsMutation,
   useGetTimeslotHistoryQuery,
   useUpdateTimeslotMutation,
 } from "../../../services/apislices/timeslotsApiSlice";
 import { useSelector } from "react-redux";
 import { getUser } from "../../../services/slices/authSlice";
+import DataFetchingLoader from "../../../components/reusablecomponents/loaders/DataFetchingLoader";
+import MessageModel from "../../../components/cutommessage/MessageModel";
 
 const TimeslotManagement = () => {
   const user = useSelector(getUser);
-  console.log(user, "user");
 
   const [
     createTimeslot,
-    {
-      isLoading: createLoading,
-      error: createError,
-      data: createData,
-      isSuccess: createIsSuccess,
-    },
+    { isLoading: createLoading, data: createData, isSuccess: createIsSuccess },
   ] = useCreateTimeslotMutation();
 
   const {
     isLoading,
-    error,
+
     data: historyData,
     isSuccess: historyIsSuccess,
   } = useGetTimeslotHistoryQuery();
@@ -37,23 +43,84 @@ const TimeslotManagement = () => {
     updateTimeslot,
     {
       isLoading: updateLoading,
-      error: updateError,
+
       data: updateData,
       isSuccess: updateIsSuccess,
     },
   ] = useUpdateTimeslotMutation();
 
+  const [getAllTimeslots, { data: timeslots, isLoading: getIsLoading }] =
+    useGetAllTimeslotsMutation();
   const [
-    getAllTimeslots,
-    { data: timeslots, isLoading: getIsLoading, error: getError },
-  ] = useGetAllTimeslotsMutation();
+    deleteTimeslot,
+    {
+      data: deleteData,
+      isLoading: isDeleteLoading,
+      isSuccess: isDeleteSuccess,
+    },
+  ] = useDeleteTimeslotMutation();
   const [viewType, setViewType] = useState("week"); // 'week' or 'month'
   const [activeTimeslots, setActiveTimeslots] = useState([]);
   const [historyTimeslots, setHistoryTimeslots] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingSlot, setEditingSlot] = useState({});
+  const [visible, setVisible] = useState(false); // Controls message visibility
+  const [messageType, setMessageType] = useState(""); // Sets the type of message (success, error, etc.)
+  const [messageText, setMessageText] = useState(""); // Sets the message content
+
+  // Function to show the message
+  const triggerMessage = (type, text) => {
+    setMessageType(type);
+    setMessageText(text);
+    setVisible(true); // Make message visible
+  };
 
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (createIsSuccess) {
+      if (createData.result === 1 && createData.data) {
+        triggerMessage("success", createData.message);
+      } else if (createData.result === 1 && !createData.data) {
+        triggerMessage("warning", createData.message);
+      } else {
+        triggerMessage(
+          "error",
+          "Internal server error, please try again later."
+        );
+      }
+    }
+  }, [createIsSuccess, createData]);
+
+  useEffect(() => {
+    if (updateIsSuccess) {
+      if (updateData.result === 1 && updateData.data) {
+        triggerMessage("success", updateData.message);
+      } else if (updateData.result === 1 && !updateData.data) {
+        triggerMessage("warning", updateData.message);
+      } else {
+        triggerMessage(
+          "error",
+          "Internal server error, please try again later."
+        );
+      }
+    }
+  }, [updateIsSuccess, updateData]);
+
+  useEffect(() => {
+    if (isDeleteSuccess) {
+      if (deleteData.result === 1 && deleteData.data) {
+        triggerMessage("success", deleteData.message);
+      } else if (deleteData.result === 1 && !deleteData.data) {
+        triggerMessage("warning", deleteData.message);
+      } else {
+        triggerMessage(
+          "error",
+          "Internal server error, please try again later."
+        );
+      }
+    }
+  }, [isDeleteSuccess, deleteData]);
 
   useEffect(() => {
     const fetchSlots = async () => {
@@ -61,7 +128,7 @@ const TimeslotManagement = () => {
     };
 
     fetchSlots();
-  }, [getAllTimeslots, createIsSuccess, updateIsSuccess]);
+  }, [getAllTimeslots, createIsSuccess, updateIsSuccess, isDeleteSuccess]);
 
   useEffect(() => {
     if (historyIsSuccess) {
@@ -71,22 +138,16 @@ const TimeslotManagement = () => {
     }
   }, [historyIsSuccess, historyData]);
 
-  console.log(timeslots, "ts");
-
   useEffect(() => {
     if (timeslots && timeslots.data !== null) {
       const list = timeslots.data?.map((i) => {
         return { ...i, key: i.id };
       });
       setActiveTimeslots(list ? list : []);
-      message.success(timeslots.message);
     } else {
       setActiveTimeslots([]);
-      message.warning("Error while fetching.!");
     }
   }, [timeslots]);
-
-  useEffect(() => {}, []);
 
   const timeslotInputs = [
     {
@@ -129,7 +190,9 @@ const TimeslotManagement = () => {
       : slotDate.isSame(moment(), "month");
   });
 
-  const handleDelete = (key) => {};
+  const handleDelete = async (key) => {
+    await deleteTimeslot(key.id).unwrap();
+  };
   // Columns for active timeslots table.
   const columns = [
     {
@@ -166,6 +229,18 @@ const TimeslotManagement = () => {
       ),
     },
     {
+      title: "Status",
+      dataIndex: "isBooked",
+      key: "isBooked",
+      responsive: ["sm"],
+      render: (_, record) => (
+        <Badge
+          count={record.isBooked ? "Booked" : "Available"}
+          style={{ backgroundColor: record.isBooked ? "red" : "#52c41a" }}
+        />
+      ),
+    },
+    {
       title: "Actions",
       key: "actions",
       align: "center",
@@ -178,7 +253,7 @@ const TimeslotManagement = () => {
           />
           <Popconfirm
             title="Are you sure you want to delete this timeslot?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
@@ -235,7 +310,7 @@ const TimeslotManagement = () => {
         <div className="action-buttons">
           <Popconfirm
             title="Are you sure you want to delete this timeslot?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
@@ -251,8 +326,6 @@ const TimeslotManagement = () => {
   ];
 
   const openEditModal = (slot) => {
-    console.log(slot, "slot");
-
     setEditingSlot({
       id: slot.id,
       date: moment(slot.dateOftimeslots),
@@ -276,28 +349,26 @@ const TimeslotManagement = () => {
 
   const handleFormFinish = async (values) => {
     if (editingSlot) {
-      console.log(values);
-
       const formattedValuesForUpdate = {
         id: parseInt(editingSlot.id),
-        dateOfTimeslots: moment(editingSlot.date).format("YYYY-MM-DD HH:mm:ss"),
+        dateOfTimeslots: editingSlot.date.format("YYYY-MM-DD HH:mm:ss"),
         startTime: values.startTime.format("HH:mm"),
         endTime: values.endTime.format("HH:mm"),
         modifiedBy: user.id,
       };
-      console.log(editingSlot, "ed");
 
       // Update an existing timeslot.
       await updateTimeslot(formattedValuesForUpdate).unwrap();
       message.success("Timeslot updated successfully.!");
     } else {
       const formattedValues = {
-        dateOfTimeslots: moment(values.date).format("YYYY-MM-DD HH:mm:ss"),
+        dateOfTimeslots: values.date.format("YYYY-MM-DD HH:mm:ss"),
         startTime: values.startTime.format("HH:mm"),
         endTime: values.endTime.format("HH:mm"),
         createdBy: user.id,
         createdDate: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
       };
+
       // Create a new timeslot.
       await createTimeslot(formattedValues).unwrap();
       message.success("Timeslot created successfully.!");
@@ -307,8 +378,14 @@ const TimeslotManagement = () => {
     form.resetFields();
   };
 
+  let content;
+
+  if (createLoading || getIsLoading || updateLoading || isLoading) {
+    content = <DataFetchingLoader />;
+  }
   return (
     <div className="timeslot-management">
+      {content}
       <div className="header">
         <div className="view-toggle">
           <Radio.Group value={viewType} onChange={handleViewChange}>
@@ -357,6 +434,13 @@ const TimeslotManagement = () => {
           initialValues={editingSlot ? editingSlot : {}}
         />
       </Modal>
+      {/* MessageModel triggered inside App.js */}
+      <MessageModel
+        messageType={messageType}
+        messageText={messageText}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </div>
   );
 };
