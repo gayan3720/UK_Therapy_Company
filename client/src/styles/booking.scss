@@ -1,0 +1,637 @@
+.booking-page {
+  overflow-y: auto;
+  height: 100vh;
+
+  /* Fix for Autocomplete dropdown causing overflow */
+  .pac-container {
+    z-index: 1500 !important; /* Ensure dropdown appears above all content */
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+
+    /* Hide scrollbar for all browsers */
+    scrollbar-width: none; /* Firefox */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+
+    .pac-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      color: var(--text) !important;
+      border-bottom: 1px solid var(--border);
+
+      &:hover {
+        background-color: var(--hover) !important;
+      }
+
+      .pac-icon {
+        display: none; /* Hide icons for cleaner look */
+      }
+
+      .pac-item-query {
+        color: var(--text) !important;
+        font-size: 14px;
+      }
+    }
+  }
+
+  /* Hero Section */
+  .booking-hero {
+    height: 60vh; // More immersive for desktop
+    background-blend-mode: multiply;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .hero-overlay {
+      background: linear-gradient(
+        to right,
+        rgba(var(--primary-r), var(--primary-g), var(--primary-b), 0.3),
+        rgba(0, 0, 0, 0.7)
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      h1,
+      .ant-typography {
+        color: var(--text);
+        text-transform: uppercase;
+        text-shadow: 0 0 15px
+          rgba(var(--primary-r), var(--primary-g), var(--primary-b), 0.5);
+      }
+    }
+  }
+
+  /* Booking Form & Service Details Section */
+  .booking-form-section {
+    padding: 60px 20px;
+    margin-top: 20px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
+    overflow: visible; /* Allow dropdown to overflow */
+
+    .prefix-select .ant-select-selector {
+      background-color: var(--surface);
+      display: flex;
+      align-items: center;
+      border-top-left-radius: 6px !important;
+      border-bottom-left-radius: 6px !important;
+      border-right: none;
+      font-weight: 500;
+      border: 1px solid var(--text) !important;
+    }
+
+    .phone-input {
+      border-top-right-radius: 6px !important;
+      border-bottom-right-radius: 6px !important;
+    }
+
+    .ant-input-group > .ant-form-item {
+      margin-bottom: 0;
+    }
+
+    .service-card.selected {
+      border: 2px solid var(--primary);
+      box-shadow: 0 0 10px
+        rgba(var(--primary-r), var(--primary-g), var(--primary-b), 0.6);
+      transform: translateY(-3px);
+    }
+
+    .latest-services {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .explore-button {
+      margin-top: 15rem;
+      background-color: var(--gradient-accent);
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      :hover {
+        color: var(--text) !important;
+      }
+      &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(
+            var(--gradient-accent),
+            var(--gradient-primary),
+            var(--gradient-secondary),
+            0.3
+          ),
+          transparent
+        );
+        animation: scan 3s infinite;
+      }
+      &:not([disabled]) {
+        background-color: var(--primary);
+        color: color-contrast(var(--text) vs white, rgba(233, 222, 222, 0.838));
+        :hover {
+          color: azure !important;
+        }
+      }
+
+      grid-column: 1 / -1;
+      margin-top: 16px;
+    }
+    .booking-card {
+      padding: 40px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--primary);
+      box-shadow: var(--shadow-lg), var(--neon-glow);
+
+      .ant-card {
+        background-color: var(--card-bg); /* Use card background from theme */
+        padding: 15px;
+        color: var(--text);
+        border: 2px solid var(--neon-accent-color);
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: var(--radius-md);
+        transition: box-shadow 0.3s ease, transform 0.3s ease,
+          background 0.3s ease;
+
+        &:hover {
+          box-shadow: var(--neon-glow);
+          transform: translateY(-5px);
+          background: var(--gradient-accent); /* Change background on hover */
+        }
+
+        &-actions {
+          border-top: 1px solid var(--primary) !important;
+        }
+
+        &-meta-title {
+          color: var(--text) !important;
+        }
+      }
+    }
+
+    .booking-form {
+      position: relative; /* Contain absolutely positioned elements */
+      .ant-input,
+      .ant-picker {
+        background: var(--surface) !important;
+        border-color: var(--border) !important;
+        color: var(--text) !important;
+      }
+      label {
+        color: var(--text);
+      }
+      h3 {
+        margin-bottom: 24px;
+        color: var(--text);
+        text-transform: uppercase;
+      }
+      .ant-form-item {
+        margin-bottom: 24px; /* Add more space for dropdown */
+        &.has-error {
+          .ant-input,
+          .ant-picker {
+            border-color: var(--error) !important;
+            box-shadow: 0 0 8px var(--error);
+            transition: var(--transition-fast);
+          }
+          .ant-form-item-explain {
+            color: var(--error);
+            font-weight: 600;
+            margin-top: 4px;
+          }
+        }
+      }
+      /* Specific style for address input container */
+      .ant-form-item-control {
+        position: relative;
+        z-index: 100; /* Ensure input stays above map */
+      }
+      .map-placeholder {
+        width: 100%;
+        height: 200px;
+        background: var(--hover);
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        position: relative;
+        &:after {
+          content: "📍";
+          font-size: 2rem;
+          filter: hue-rotate(90deg);
+        }
+      }
+      .profile-image-upload {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 16px;
+
+        .upload-placeholder {
+          width: 100%;
+          height: 100%;
+          border: 1px dashed var(--border);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--text);
+          transition: var(--transition-fast);
+          &:hover {
+            border-color: var(--primary);
+            box-shadow: var(--neon-glow);
+          }
+        }
+      }
+    }
+
+    .service-details {
+      .selected-service-card,
+      .service-card {
+        transition: var(--transition-fast);
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: var(--shadow-md), 0 0 15px var(--secondary);
+        }
+
+        .card-image {
+          width: 80%;
+          height: 200px;
+          object-fit: cover;
+        }
+        .service-meta {
+          margin-top: 16px;
+          p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-soft);
+          }
+        }
+      }
+      .other-services {
+        .ant-card-meta-description {
+          color: var(--text) !important;
+        }
+
+        h3 {
+          margin-bottom: 16px;
+          color: var(--text);
+          text-transform: uppercase;
+        }
+        button {
+          background: var(--primary);
+          color: var(--text);
+          padding: 12px 24px;
+          border-radius: var(--button-radius);
+          transition: var(--transition-fast);
+
+          &:hover {
+            color: var(--text) !important;
+            background: var(--primary-dark);
+            box-shadow: var(--neon-glow);
+          }
+          &:not([disabled]) {
+            background-color: var(--primary);
+            color: color-contrast(var(--primary) vs black, white);
+            :hover {
+              color: var(--text) !important;
+            }
+          }
+        }
+        .explore-button {
+          margin-top: 15rem;
+          background-color: var(--gradient-accent);
+          color: var(--text);
+          position: relative;
+          overflow: hidden;
+          :hover {
+            color: var(--text) !important;
+          }
+          &::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+              90deg,
+              transparent,
+              rgba(
+                var(--gradient-accent),
+                var(--gradient-primary),
+                var(--gradient-secondary),
+                0.3
+              ),
+              transparent
+            );
+            animation: scan 3s infinite;
+          }
+          &:not([disabled]) {
+            background-color: var(--primary);
+            color: color-contrast(
+              var(--text) vs white,
+              rgba(233, 222, 222, 0.838)
+            );
+            :hover {
+              color: azure !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .ant-btn {
+    :hover {
+      color: var(--text);
+    }
+  }
+  /* Time Slots Section */
+  .time-slots-section {
+    padding: 60px 20px;
+    text-align: center;
+    margin-top: 20px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-primary);
+    // Custom range picker styles
+    .custom-range-picker {
+      & .ant-picker-input input {
+        color: var(--text) !important;
+        &::placeholder {
+          color: var(--text-soft) !important;
+        }
+      }
+
+      .ant-picker-suffix,
+      .ant-picker-clear {
+        color: var(--text-soft) !important;
+        &:hover {
+          color: var(--text) !important;
+        }
+      }
+    }
+
+    // Dropdown styles
+    .custom-range-picker-dropdown {
+      background: var(--surface) !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: var(--shadow-lg) !important;
+
+      .ant-picker-panel-container {
+        background: var(--surface) !important;
+
+        .ant-picker-date-panel,
+        .ant-picker-header,
+        .ant-picker-content th {
+          color: var(--text) !important;
+        }
+
+        .ant-picker-cell {
+          color: var(--text-soft) !important;
+
+          &.ant-picker-cell-in-view {
+            color: var(--text) !important;
+          }
+
+          &.ant-picker-cell-selected .ant-picker-cell-inner {
+            background: var(--primary) !important;
+          }
+
+          &:hover .ant-picker-cell-inner {
+            background: var(--hover) !important;
+          }
+        }
+      }
+    }
+
+    h3 {
+      margin-bottom: 24px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+    .time-slots {
+      display: grid;
+      gap: 1.5rem;
+      .day-slot {
+        margin-bottom: 24px;
+        h3 {
+          color: var(--text);
+          margin-bottom: 8px;
+        }
+        .slot-buttons {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+          gap: 8px;
+          button {
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: var(--button-radius);
+            transition: var(--transition-fast);
+            background: var(--hover);
+            border: 1px solid var(--border);
+            &:hover {
+              border-color: var(--primary);
+              box-shadow: var(--neon-glow);
+            }
+            &.selected {
+              background: var(--primary);
+              color: var(--background);
+            }
+
+            &:hover {
+              background: var(--primary-dark);
+              box-shadow: var(--neon-glow);
+            }
+            &:not([disabled]) {
+              background-color: var(--primary);
+              color: color-contrast(var(--primary) vs white, black);
+            }
+          }
+        }
+      }
+    }
+  }
+  .request-service-section {
+    .neon-button {
+      border: 1px solid var(--neon-glow);
+      background: var(--gradient-accent);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: var(--button-radius);
+      transition: var(--transition-fast);
+      position: unset;
+      &:hover {
+        color: var(--text) important;
+        background: var(--gradient-secondary) !important;
+        box-shadow: var(--neon-glow);
+      }
+
+      &.selected {
+        background: var(--neon-glow);
+        color: var(--text);
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(var(--primary-r), var(--primary-g), var(--primary-b), 0.4),
+          transparent
+        );
+        animation: scan 3s infinite;
+        pointer-events: none;
+      }
+    }
+  }
+  .message-modal {
+    background: var(--surface); // Set background color if necessary
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Add shadow for better visibility
+    display: block;
+    .ant-modal-body {
+      padding: 20px 24px; // Adjust padding as needed
+    }
+
+    .ant-modal-content {
+      border-radius: 8px; // Rounded corners for the modal
+    }
+  }
+
+  /* Map Container - UPDATED */
+  .map-container {
+    position: relative;
+    width: 100%;
+    height: 300px; /* Fixed height */
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+    contain: strict; /* Isolate layout */
+    box-sizing: border-box; /* Include borders in dimensions */
+    margin-top: 0;
+    z-index: 50; /* Below input but above other content */
+
+    #map {
+      width: 100% !important;
+      height: 100% !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: block;
+    }
+  }
+
+  /* Add this to prevent layout shifts */
+  .booking-form-section,
+  .time-slots-section,
+  .request-service-section {
+    width: 100%;
+    overflow: visible; /* Allow dropdown to overflow */
+    contain: content;
+  }
+
+  /* Time slots grid - prevent overflow */
+  .slot-buttons {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+    overflow: hidden !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-hero {
+    height: 30vh;
+    .hero-title {
+      font-size: 2rem;
+    }
+  }
+  .booking-form-section,
+  .time-slots-section {
+    padding: 40px 10px;
+  }
+  .explore-button {
+    margin-top: 2rem; // Instead of 15rem
+    width: 100%;
+  }
+
+  .booking-card {
+    padding: 20px;
+  }
+
+  .time-slots .day-slot {
+    margin-bottom: 1rem;
+  }
+
+  /* Adjust Autocomplete for mobile */
+  .pac-container {
+    max-width: calc(100vw - 40px) !important;
+    left: 20px !important;
+    right: 20px !important;
+  }
+}
+
+@keyframes neon-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px var(--primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px var(--primary));
+  }
+}
+
+@keyframes scan {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Scrollbar styling for the entire page */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

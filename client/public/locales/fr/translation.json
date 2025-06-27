@@ -1,0 +1,19 @@
+{
+  "searchPlaceholder": "Rechercher…",
+  "switchToDark": "Passer en mode sombre",
+  "switchToLight": "Passer en mode clair",
+  "home": "Accueil",
+  "aboutUs": "À propos",
+  "services": "Services",
+  "contact": "Contact",
+  "bookNow": "Réserver maintenant",
+  "adminPanel": "Panneau d’administration",
+  "signIn": "Se connecter",
+  "signUp": "S’inscrire",
+  "logout": "Se déconnecter",
+  "logoutConfirmation": "Voulez-vous vraiment vous déconnecter ?",
+  "profile": "Profil",
+  "notifications": "Notifications",
+  "appointments": "Rendez-vous",
+  "settings": "Paramètres"
+}

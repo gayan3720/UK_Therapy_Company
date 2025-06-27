@@ -1,0 +1,86 @@
+@use "./theme.scss" as theme;
+@use "./footer.scss" as footer;
+@use "./sidebar.scss" as sidebar;
+@use "./customform.scss" as customform;
+@use "./mainlayout.scss" as mainlayout;
+@use "./custombutton.scss" as custombutton;
+@use "./datafetchingloader.scss" as datafetchingloader;
+@use "./pageloadingloader.scss" as pageloadingloader;
+@use "./home.scss" as home;
+@use "./signin.scss" as signin;
+@use "./signup.scss" as signup;
+@use "./floatingbutton.scss" as floatingbutton;
+@use "./aboutus.scss" as aboutus;
+@use "./services.scss" as services;
+@use "./contact.scss" as contact;
+@use "./booking.scss" as booking;
+@use "./admindashboard.scss" as admindashboard;
+@use "./tables.scss" as tables;
+@use "./usermanagement.scss" as usermanagement;
+@use "./servicemanagement.scss" as servicemanagement;
+@use "./appointmentmanagement.scss" as appointmentmanagement;
+@use "./timeslotmanagement.scss" as timeslotmanagement;
+@use "./reports.scss" as reports;
+@use "./settings.scss" as settings;
+@use "./messagemodel.scss" as messagemodel;
+@use "./button.scss" as button;
+@use "./table.scss" as table;
+@use "./navbar.scss" as navbar;
+
+body,
+html {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  /* Remove overflow-y: auto from here */
+  height: auto; /* Changed from 100% to auto */
+}
+
+body {
+  padding: 80px 20px 0 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text);
+  transition: background-color var(--transition-smooth),
+    color var(--transition-smooth);
+  /* Remove height: fit-content; */
+  overflow-y: auto; /* Keep as auto */
+}
+
+// Apply the theme for both dark and light mode
+[data-theme="dark"] {
+  background-color: var(--background);
+  color: var(--text);
+}
+// Global Resets and Utility Styles
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Optional: Target dynamically injected runtime class if necessary */
+.css-dev-only-do-not-override-1yacf91 {
+  .ant-menu-horizontal > .ant-menu-item-selected,
+  .ant-menu-horizontal > .ant-menu-submenu-selected,
+  .ant-menu-horizontal > .ant-menu-item-active,
+  .ant-menu-horizontal > .ant-menu-submenu-active,
+  .ant-menu-horizontal > .ant-menu-item:hover,
+  .ant-menu-horizontal > .ant-menu-submenu:hover {
+    border-bottom: none !important;
+  }
+
+  .ant-menu-horizontal > .ant-menu-item-selected::after,
+  .ant-menu-horizontal > .ant-menu-submenu-selected::after,
+  .ant-menu-horizontal > .ant-menu-item-active::after,
+  .ant-menu-horizontal > .ant-menu-submenu-active::after,
+  .ant-menu-horizontal > .ant-menu-item:hover::after,
+  .ant-menu-horizontal > .ant-menu-submenu:hover::after {
+    border-bottom: none !important;
+    content: none !important;
+  }
+}
+.lottie-menu-icon {
+  filter: var(--menu-icon-filter);
+  transition: filter 0.3s ease;
+}

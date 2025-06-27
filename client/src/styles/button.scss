@@ -1,0 +1,25 @@
+@use "./theme.scss" as theme;
+
+/* ==========================================================================
+   2. Global Button Styles (still applies to all <Button type="primary"/>)
+   ========================================================================== */
+.ant-btn {
+  border-radius: var(--button-radius);
+  transition: var(--transition-smooth);
+
+  &-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    box-shadow: var(--shadow-sm), var(--neon-glow);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md), var(--neon-glow);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}

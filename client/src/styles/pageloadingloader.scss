@@ -1,0 +1,15 @@
+.page-loading-loader-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--hover); // Use CSS variable
+  z-index: 1000;
+
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary); // Use CSS variable
+    transition: width 0.3s ease;
+  }
+}

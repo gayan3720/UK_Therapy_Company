@@ -1,0 +1,146 @@
+.login-page-container-signup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--gradient-primary);
+  margin: 0 200px 20px 200px;
+  border-radius: 20px;
+  min-height: 80vh;
+
+  .login-card-signup {
+    background-color: var(--surface);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 600px; // Increased width
+    animation: fadeIn 0.5s var(--transition-smooth);
+
+    /* Add logo styles */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px; /* Reduced space between logo and title */
+
+      .login-logo {
+        border-radius: 10px;
+        max-width: 120px; /* Control logo size */
+        height: auto;
+      }
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 24px;
+      color: var(--text);
+      /* Add the new title styles */
+      font-size: 1.5rem; /* Reduced size */
+      text-transform: uppercase; /* Uppercase */
+      font-weight: 700; /* Bold */
+      color: var(--primary); /* Primary color */
+      letter-spacing: 1px; /* Spacing between letters */
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    }
+
+    label {
+      color: var(--text);
+    }
+
+    .signin-button {
+      width: 100%;
+      height: 40px;
+      border: none;
+      background: var(--gradient-primary);
+      color: var(--text);
+      transition: all var(--transition-fast);
+      position: static;
+      &:hover {
+        filter: brightness(1.05);
+      }
+    }
+
+    .google-signup-button {
+      width: 100%;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: static;
+    }
+
+    .signup-link {
+      margin-top: 16px;
+      text-align: center;
+      span {
+        color: var(--text);
+      }
+      a {
+        color: var(--text);
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    /* Centering the Avatar Uploader */
+    .avatar-uploader {
+      display: block; // set block for centering
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 0 auto 16px; // center align and add bottom margin
+      .ant-upload {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffff;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .login-page-container-signup {
+    margin: 0 20px 20px 20px; /* Reduce side margins on mobile */
+
+    .login-card-signup {
+      .login-title {
+        font-size: 1.3rem; /* Slightly smaller on mobile */
+      }
+
+      .logo-container .login-logo {
+        max-width: 100px; /* Slightly smaller logo on mobile */
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page-container-signup {
+    .login-card-signup {
+      padding: 20px;
+    }
+  }
+}

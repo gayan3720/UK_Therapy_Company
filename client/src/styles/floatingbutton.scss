@@ -1,0 +1,320 @@
+/* floatingButton.scss */
+
+.floating-menu {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .floating-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(20px);
+
+    &.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .floating-button {
+      margin-bottom: 10px;
+      width: 45px;
+      height: 45px;
+      border: none;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      transition: filter 0.3s ease;
+
+      &:hover {
+        filter: brightness(1.1);
+      }
+
+      &.scroll-top {
+        background: #1890ff;
+        color: #fff;
+      }
+      &.toggle-theme {
+        background: #52c41a;
+        color: #fff;
+      }
+      &.home {
+        background: #fa8c16;
+        color: #fff;
+      }
+      &.whatsapp {
+        background: #25d366;
+        color: #fff;
+      }
+      &.chat {
+        background: #0084ff;
+        color: #fff;
+      }
+    }
+  }
+
+  .floating-main-button {
+    background: var(--primary, #4caf50);
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease;
+    &:hover {
+      background: var(--primary-dark, #388e3c);
+    }
+  }
+}
+
+/* Overlay behind chat panel */
+/* Overlay that darkens the rest of page when chat panel open */
+.chat-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  z-index: 1000;
+}
+.chat-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Chat panel sliding from right */
+.chat-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  min-width: 500px;
+  height: 100%;
+  background-color: var(--surface);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--transition-smooth), width var(--transition-fast);
+  z-index: 1001;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  /* Slide-in/out keyframes */
+  @keyframes slideInFromRight {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes slideOutToRight {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+.chat-panel {
+  animation: slideInFromRight 0.3s ease-out forwards;
+}
+.chat-panel.closing {
+  animation: slideOutToRight 0.3s ease-out forwards;
+}
+
+.chat-panel.show {
+  transform: translateX(0);
+  width: 100%;
+}
+
+/* Header bar */
+.chat-header {
+  background-color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Chat body (list or heads) */
+.chat-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  background-color: var(--background);
+  padding: 20px;
+  color: var(--text);
+}
+
+/* Chat heads list container */
+.chat-heads-container {
+  padding: 1rem;
+}
+.chat-head-title {
+  color: var(--text);
+}
+/* Chat heads skeleton row */
+.chat-heads-skeleton {
+  padding: 1rem;
+}
+.chat-head-skel-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* Chat interface (history + input) */
+.chat-interface {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Skeleton message bubble alignment */
+.chat-history-skeleton {
+  padding: 1rem;
+}
+.skeleton-row {
+  margin-bottom: 12px;
+}
+.skeleton-row.align-left {
+  display: flex;
+  justify-content: flex-start;
+}
+.skeleton-row.align-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Message bubbles */
+.my-msg .msg-content,
+.other-msg .msg-content {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  max-width: 70%;
+  word-wrap: break-word;
+}
+.my-msg .msg-content {
+  background-color: var(--primary-light);
+  margin-left: auto;
+}
+.other-msg .msg-content {
+  background-color: var(--tertiary-light);
+  margin-right: auto;
+}
+.msg-time {
+  font-size: 0.7rem;
+  color: var(--text-soft);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  padding: 0 1rem 4px;
+  font-style: italic;
+  color: var(--text-soft);
+}
+
+/* Input area */
+.chat-input {
+  flex: 0 0 auto;
+  display: flex;
+  border-top: 1px solid var(--tertiary-light);
+  padding: 0.5rem;
+  gap: 0.5rem;
+  background-color: var(--surface);
+}
+.send-button {
+  border-radius: var(--radius-sm);
+  background-color: var(--primary);
+  border: none;
+  color: #fff;
+}
+
+/* Floating button styles (if not already present) */
+.floating-menu {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.floating-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translateY(20px);
+}
+.floating-buttons.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.floating-button {
+  margin-bottom: 10px;
+  width: 45px;
+  height: 45px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: filter 0.3s ease;
+}
+.floating-button:hover {
+  filter: brightness(1.1);
+}
+/* Customize each if desired */
+.floating-button.scroll-top {
+  background: #1890ff;
+  color: #fff;
+}
+.floating-button.chat {
+  background: #0084ff;
+  color: #fff;
+}
+.floating-button.toggle-theme {
+  background: #52c41a;
+  color: #fff;
+}
+.floating-button.home {
+  background: #fa8c16;
+  color: #fff;
+}
+.floating-button.whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+.floating-main-button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  transition: background 0.3s ease;
+}
+.floating-main-button:hover {
+  background: var(--primary-light);
+}
+
+/* Responsive adjustments if needed */
+@media (max-width: 768px) {
+  .chat-panel.show {
+    width: 100%;
+    max-width: 50%;
+  }
+  .chat-panel {
+    min-width: 300px;
+  }
+}

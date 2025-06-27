@@ -1,0 +1,19 @@
+{
+  "searchPlaceholder": "Search…",
+  "switchToDark": "Switch to Dark Mode",
+  "switchToLight": "Switch to Light Mode",
+  "home": "Home",
+  "aboutUs": "About Us",
+  "services": "Services",
+  "contact": "Contact",
+  "bookNow": "Book Now",
+  "adminPanel": "Admin Panel",
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "logout": "Log Out",
+  "logoutConfirmation": "Are you sure you want to log out?",
+  "profile": "Profile",
+  "notifications": "Notifications",
+  "appointments": "Appointments",
+  "settings": "Settings"
+}

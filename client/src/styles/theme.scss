@@ -1,0 +1,144 @@
+:root {
+  /* Fresh Green & Neutral Tones Palette */
+
+  /* Primary Colors */
+  --primary: #4caf50; /* Fresh Green */
+  --primary-dark: #388e3c; /* Darker Green */
+  --primary-light: #81c784; /* Light Green */
+
+  /* Secondary Colors */
+  --secondary: #f5f5f5; /* Light Beige */
+  --secondary-dark: #e0e0e0; /* Soft Gray */
+  --secondary-light: #ffecb3; /* Pale Yellow */
+
+  /* Tertiary Colors */
+  --tertiary: #333333; /* Charcoal Gray */
+  --tertiary-dark: #212121; /* Dark Gray */
+  --tertiary-light: #b0bec5; /* Muted Gray */
+
+  /* Background and Surface Colors */
+  --background: #ffffff; /* White */
+  --surface: #fafafa; /* Light Gray */
+  --text: rgba(45, 62, 80, 0.85); /* Dark Slate */
+  --text-soft: rgba(99, 110, 114, 0.6); /* Soft Slate Gray */
+
+  /* Semantic Colors */
+  --warning: #ffb74d; /* Soft Amber */
+  --success: #78a59f; /* Muted Sea Green */
+  --error: #be6c6c; /* Muted Rose */
+  --danger: #ff4d4f;
+
+  /* UI Utility Colors */
+  --hover: rgba(76, 175, 80, 0.15); /* Light Green Hover */
+  --hover-primary: #ff9a8b;
+  --focus-outline: #4caf50; /* Fresh Green Focus Outline */
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #4caf50 0%, #f5f5f5 100%);
+  --gradient-secondary: linear-gradient(45deg, #f5f5f5 0%, #333333 100%);
+  --gradient-accent: linear-gradient(135deg, #81c784 0%, #b0bec5 100%);
+
+  /* Neon Shadow for Glow Effects */
+  --neon-accent-color: #81c784; /* Neon Green */
+  --neon-shadow-color: rgba(129, 199, 132, 0.5);
+  --neon-glow: #00e5ff; /* reuse for logo text glow */
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(76, 175, 80, 0.15);
+  --shadow-md: 0 4px 12px rgba(214, 167, 122, 0.2);
+  --shadow-lg: 0 8px 24px rgba(140, 154, 168, 0.25);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* Transitions */
+  --transition-fast: 0.18s ease-out;
+  --transition-smooth: 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Component Defaults */
+  --button-radius: var(--radius-md);
+  --card-bg: var(--surface);
+  --input-border: 1px solid rgba(45, 62, 80, 0.12);
+
+  /* Lottie Animation */
+  --menu-icon-filter: brightness(0) saturate(100%) invert(0); /* Black for light theme */
+  /* Transitions */
+  --transition-fast: 0.18s ease-out;
+  --transition-smooth: 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ========================================================================== */
+/* Dark Theme - Maximum Noir Mode with Ultra-Deep Greens & Blacks            */
+/* ========================================================================== */
+[data-theme="dark"] {
+  /* Primary Colors */
+  --primary: #1b2e1b; /* Near-Black Green */
+  --primary-dark: #0f190f; /* Ultra Dark Green */
+  --primary-light: #2e7d32; /* Accent Green */
+
+  /* Secondary Colors */
+  --secondary: #000000; /* Pure Black */
+  --secondary-dark: #000000; /* Pure Black */
+  --secondary-light: #111111; /* Very Dark Gray */
+
+  /* Tertiary Colors */
+  --tertiary: #4a4a4a; /* Dark Mid Gray */
+  --tertiary-dark: #0a0a0a; /* Almost Black Gray */
+  --tertiary-light: #6e6e6e; /* Mid Gray */
+
+  /* Background and Surface Colors */
+  --background: #000000; /* Black */
+  --surface: #0a0a0a; /* Very Dark */
+  --text: rgba(245, 245, 245, 0.9); /* Almost White */
+  --text-soft: rgba(180, 180, 180, 0.6);
+  --text-muted: rgba(140, 140, 140, 0.5);
+
+  /* Semantic Colors */
+  --warning: #ffa000;
+  --success: #2e7d32;
+  --error: #b71c1c;
+  --danger: #b71c1c;
+
+  /* UI Utility Colors */
+  --hover: rgba(46, 46, 46, 0.6); /* Dark Hover */
+  --hover-primary: #335933;
+  --focus-outline: #2e7d32;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #1b2e1b 0%, #0f190f 100%);
+  --gradient-secondary: linear-gradient(45deg, #000000 0%, #0a0a0a 100%);
+  --gradient-accent: linear-gradient(135deg, #2e7d32 0%, #6e6e6e 100%);
+
+  /* Neon Shadow for Glow Effects */
+  --neon-accent-color: #00e5ff;
+  --neon-shadow-color: rgba(0, 229, 255, 0.4);
+  --neon-glow: #00e5ff;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.75);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.85);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.9);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  /* Transitions */
+  --transition-fast: 0.18s ease-out;
+  --transition-smooth: 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* Component Defaults */
+  --button-radius: var(--radius-md);
+  --card-bg: var(--surface);
+  --input-border: 1px solid rgba(255, 255, 255, 0.08);
+
+  /* Lottie Animation Filter */
+  --menu-icon-filter: brightness(0) saturate(100%) invert(1); /* White icon */
+
+  /* Transitions */
+  --transition-fast: 0.18s ease-out;
+  --transition-smooth: 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+}

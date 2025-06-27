@@ -1,0 +1,23 @@
+.settings-page {
+  padding: 24px;
+  background-color: var(--background);
+  color: var(--text);
+
+  h2 {
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  .ant-tabs-nav {
+    margin-bottom: 24px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-btn {
+    margin-top: 16px;
+  }
+}
