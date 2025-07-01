@@ -4,7 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"node swagger.js\" \"nodemon server.js\" \"node openSwagger.js\"",
+    "dev":  "nodemon server.js",
     "start": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
